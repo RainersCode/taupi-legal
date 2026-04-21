@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>taupi — a calm place for your money</title>
+  <meta name="description" content="Taupi is a personal budgeting app for people who want clarity, not another dashboard full of graphs. Track expenses, scan receipts, hit long-term goals. EU-hosted, no ads, no bank logins." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="taupi — a calm place for your money" />
+  <meta property="og:description" content="A budgeting app that keeps your money in focus. Scan receipts, track budgets, hit long-term goals. No ads, no bank logins." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://rainerscode.github.io/taupi-legal/" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-0: #07091c;
+      --bg-1: #0d1128;
+      --bg-2: #141a3a;
+      --bg-3: #1b2249;
+      --text: #F3F4FA;
+      --text-dim: #A8A8B3;
+      --text-muted: #6b6d82;
+      --brand: #5A6BFF;
+      --brand-2: #8093FF;
+      --brand-3: #3A4AE0;
+      --accent: #4FD1FF;
+      --success: #2DD4A7;
+      --warn: #FFB547;
+      --danger: #FF3B87;
+
+      --sora: "Sora", ui-sans-serif, system-ui, sans-serif;
+      --serif: "Instrument Serif", "Times New Roman", serif;
+      --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+      --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.11 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+
+      --ease: cubic-bezier(.2,.7,.2,1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--sora);
+      font-weight: 400;
+      background: var(--bg-1);
+      color: var(--text);
+      line-height: 1.55;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Atmospheric mesh + grain */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(60% 50% at 12% 8%,  rgba(128, 147, 255, 0.28), transparent 60%),
+        radial-gradient(45% 40% at 92% 22%, rgba(79, 209, 255, 0.14), transparent 60%),
+        radial-gradient(80% 60% at 50% 110%, rgba(58, 74, 224, 0.18), transparent 60%),
+        linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 30%, var(--bg-1) 70%, var(--bg-0) 100%);
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image: var(--grain);
+      opacity: 0.35;
+      mix-blend-mode: overlay;
+      pointer-events: none;
+    }
+
+    /* ─── Layout ─── */
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+    @media (max-width: 700px) { .wrap { padding: 0 20px; } }
+
+    /* ─── Wordmark (matches in-app TaupiLogo) ─── */
+    .wordmark {
+      display: inline-flex;
+      align-items: baseline;
+      font-family: var(--sora);
+      font-weight: 800;
+      letter-spacing: -0.045em;
+      line-height: 1;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .wordmark .dot {
+      display: inline-block;
+      width: 0.22em;
+      height: 0.22em;
+      margin-left: 0.1em;
+      border-radius: 50%;
+      background: var(--brand);
+    }
+    .wordmark.glow .dot {
+      box-shadow: 0 0 24px 4px rgba(90, 107, 255, 0.55);
+    }
+
+    /* ─── Nav ─── */
+    nav.top {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 22px 0;
+      backdrop-filter: saturate(140%) blur(14px);
+      -webkit-backdrop-filter: saturate(140%) blur(14px);
+      background: rgba(13, 17, 40, 0.58);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    nav.top .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    nav.top .wordmark { font-size: 26px; }
+    nav.top ul {
+      display: flex;
+      gap: 28px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    nav.top ul a {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color .2s var(--ease);
+    }
+    nav.top ul a:hover { color: var(--text); }
+    @media (max-width: 640px) { nav.top ul { display: none; } }
+
+    /* ─── Hero ─── */
+    .hero {
+      position: relative;
+      padding: 80px 0 140px;
+      overflow: hidden;
+    }
+    .hero .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 64px;
+      align-items: center;
+    }
+    @media (max-width: 940px) {
+      .hero { padding: 56px 0 100px; }
+      .hero .grid { grid-template-columns: 1fr; gap: 56px; }
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 8px 14px;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.02);
+    }
+    .eyebrow::before {
+      content: "";
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    h1.display {
+      font-family: var(--sora);
+      font-weight: 800;
+      font-size: clamp(44px, 7vw, 92px);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      margin: 24px 0 0;
+    }
+    h1.display em {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--brand-2);
+      letter-spacing: -0.01em;
+      padding-right: 0.08em;
+    }
+    h1.display .punct {
+      display: inline-block;
+      width: 0.28em;
+      height: 0.28em;
+      border-radius: 50%;
+      background: var(--brand);
+      vertical-align: 0.12em;
+      margin-left: 0.1em;
+    }
+
+    p.lede {
+      margin-top: 28px;
+      max-width: 560px;
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--text-dim);
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 36px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 22px;
+      border-radius: 14px;
+      font-family: var(--sora);
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: transform .18s var(--ease), box-shadow .18s var(--ease), background .2s var(--ease);
+    }
+    .btn.primary {
+      color: white;
+      background: linear-gradient(135deg, var(--brand-2) 0%, var(--brand) 50%, var(--brand-3) 100%);
+      box-shadow: 0 10px 30px -8px rgba(90,107,255,0.6), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+    .btn.primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px -10px rgba(90,107,255,0.7), inset 0 1px 0 rgba(255,255,255,0.2); }
+    .btn.ghost {
+      color: var(--text);
+      border-color: rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.02);
+    }
+    .btn.ghost:hover { border-color: rgba(255,255,255,0.24); background: rgba(255,255,255,0.05); }
+    .btn .ico { width: 18px; height: 18px; }
+
+    .soon-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 4px;
+      background: rgba(79, 209, 255, 0.14);
+      color: var(--accent);
+      margin-left: 8px;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 28px;
+      margin-top: 36px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      flex-wrap: wrap;
+    }
+    .meta-row span::before {
+      content: "—";
+      margin-right: 10px;
+      color: var(--brand);
+    }
+
+    /* ─── Hero mock card ─── */
+    .mockstage {
+      position: relative;
+      min-height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mockstage::before {
+      content: "";
+      position: absolute;
+      width: 420px; height: 420px;
+      left: 50%; top: 50%;
+      transform: translate(-50%,-50%);
+      background: radial-gradient(closest-side, rgba(90,107,255,0.35), transparent 70%);
+      filter: blur(20px);
+      z-index: 0;
+    }
+
+    .card-mock {
+      position: relative;
+      z-index: 1;
+      width: 340px;
+      padding: 22px;
+      border-radius: 24px;
+      background: linear-gradient(160deg, rgba(32, 38, 78, 0.72) 0%, rgba(22, 27, 54, 0.92) 100%);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow:
+        0 40px 80px -24px rgba(5, 8, 28, 0.9),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+      animation: floaty 9s ease-in-out infinite;
+    }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50%      { transform: translateY(-14px) rotate(-0.4deg); }
+    }
+
+    .card-mock .top {
+      display: flex; justify-content: space-between; align-items: center;
+      color: var(--text-dim); font-size: 11px;
+      font-family: var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+    }
+    .card-mock .top .live {
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .card-mock .top .live::before {
+      content: ""; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--success); box-shadow: 0 0 10px var(--success);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: .5; }
+      50%      { opacity: 1; }
+    }
+
+    .card-mock .amount {
+      margin-top: 16px;
+      display: flex; align-items: baseline; gap: 4px;
+    }
+    .card-mock .amount .major {
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 54px;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+    .card-mock .amount .minor {
+      font-family: var(--mono);
+      font-size: 22px;
+      color: var(--text-dim);
+    }
+    .card-mock .amount .cur {
+      font-family: var(--sora);
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--brand-2);
+      margin-right: 6px;
+    }
+
+    .card-mock .label {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    .progress {
+      margin-top: 20px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+      position: relative;
+    }
+    .progress .fill {
+      position: absolute; inset: 0 auto 0 0;
+      width: 68%;
+      background: linear-gradient(90deg, var(--brand), var(--accent));
+      border-radius: 999px;
+      box-shadow: 0 0 18px rgba(79,209,255,0.4);
+    }
+    .progress-row {
+      margin-top: 10px;
+      display: flex; justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 11px; letter-spacing: 0.08em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .feed {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px dashed rgba(255,255,255,0.1);
+    }
+    .feed .row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0;
+      font-size: 13px;
+    }
+    .feed .row .label { color: var(--text); font-weight: 400; }
+    .feed .row .store { color: var(--text-muted); font-size: 11px; font-family: var(--mono); letter-spacing: 0.06em; }
+    .feed .row .val { font-family: var(--mono); color: var(--text); }
+    .feed .row .val.minus { color: var(--danger); }
+    .feed .row .val.plus { color: var(--success); }
+
+    /* Receipt strip divider */
+    .receipt-strip {
+      position: relative;
+      height: 22px;
+      margin: 0;
+      background: var(--bg-0);
+    }
+    .receipt-strip::before, .receipt-strip::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0;
+      height: 11px;
+      background-image: radial-gradient(circle at 11px 11px, var(--bg-1) 6px, transparent 6.5px);
+      background-size: 22px 22px;
+      background-repeat: repeat-x;
+    }
+    .receipt-strip::before { top: 0; }
+    .receipt-strip::after { bottom: 0; transform: scaleY(-1); }
+
+    /* ─── Section headings ─── */
+    section.block {
+      padding: 120px 0;
+      position: relative;
+    }
+    @media (max-width: 700px) { section.block { padding: 80px 0; } }
+
+    h2.section-head {
+      font-family: var(--sora);
+      font-weight: 800;
+      font-size: clamp(32px, 5vw, 56px);
+      letter-spacing: -0.035em;
+      line-height: 1.02;
+      margin: 0;
+      max-width: 680px;
+    }
+    h2.section-head em {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--brand-2);
+    }
+    .section-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin: 0 0 20px;
+      display: inline-block;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+    }
+    .section-lede {
+      margin-top: 20px;
+      max-width: 640px;
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--text-dim);
+    }
+
+    /* ─── Features grid ─── */
+    .features-grid {
+      margin-top: 64px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+    @media (max-width: 900px) {
+      .features-grid { grid-template-columns: 1fr; }
+    }
+    .feature {
+      position: relative;
+      padding: 32px 28px;
+      border-radius: 24px;
+      background: rgba(22, 27, 54, 0.55);
+      border: 1px solid rgba(255,255,255,0.07);
+      overflow: hidden;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform .3s var(--ease), border-color .3s var(--ease);
+    }
+    .feature:hover {
+      transform: translateY(-4px);
+      border-color: rgba(128, 147, 255, 0.24);
+    }
+    .feature .num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.24em;
+    }
+    .feature h3 {
+      font-family: var(--sora);
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin: 14px 0 10px;
+      color: var(--text);
+    }
+    .feature h3 em {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--brand-2);
+    }
+    .feature p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+    .feature .visual {
+      margin-top: 28px;
+      height: 120px;
+      position: relative;
+      border-radius: 14px;
+      background: rgba(7, 9, 28, 0.55);
+      border: 1px solid rgba(255,255,255,0.04);
+      overflow: hidden;
+    }
+
+    /* Feature visual variations */
+    .visual.scan::before {
+      content: "";
+      position: absolute; inset: 14px;
+      border: 2px dashed rgba(79,209,255,0.45);
+      border-radius: 8px;
+    }
+    .visual.scan::after {
+      content: "";
+      position: absolute;
+      left: 14px; right: 14px;
+      top: 50%;
+      height: 2px;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+      animation: scan 2.6s ease-in-out infinite;
+    }
+    @keyframes scan {
+      0%, 100% { top: 20%; opacity: 0.2; }
+      50%      { top: 80%; opacity: 1; }
+    }
+
+    .visual.budget {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+    .visual.budget .bar {
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+    .visual.budget .bar::after {
+      content: "";
+      position: absolute; inset: 0 auto 0 0;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      border-radius: 999px;
+    }
+    .visual.budget .bar.b1::after { width: 82%; }
+    .visual.budget .bar.b2::after { width: 46%; background: linear-gradient(90deg, var(--warn), #FF8A3D); }
+    .visual.budget .bar.b3::after { width: 65%; background: linear-gradient(90deg, var(--success), #55E8C0); }
+    .visual.budget .lbl {
+      display: flex; justify-content: space-between;
+      font-family: var(--mono); font-size: 10px;
+      color: var(--text-dim); letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .visual.goal {
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .visual.goal .ring {
+      width: 92px; height: 92px;
+      border-radius: 50%;
+      background:
+        conic-gradient(var(--accent) 0% 62%, rgba(255,255,255,0.08) 62% 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .visual.goal .ring::before {
+      content: "";
+      position: absolute; inset: 8px;
+      border-radius: 50%;
+      background: var(--bg-1);
+    }
+    .visual.goal .ring span {
+      position: relative;
+      z-index: 1;
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 22px;
+      color: var(--text);
+    }
+
+    /* ─── How it works ─── */
+    .steps {
+      margin-top: 72px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    @media (max-width: 900px) { .steps { grid-template-columns: 1fr; } }
+    .step {
+      padding: 40px 28px;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      position: relative;
+    }
+    .step:last-child { border-right: none; }
+    @media (max-width: 900px) {
+      .step { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); }
+      .step:last-child { border-bottom: none; }
+    }
+    .step .n {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.24em;
+      color: var(--brand-2);
+      text-transform: uppercase;
+    }
+    .step h3 {
+      font-family: var(--sora);
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: -0.025em;
+      margin: 18px 0 10px;
+      max-width: 240px;
+      line-height: 1.1;
+    }
+    .step h3 em {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--text);
+    }
+    .step p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* ─── Principles strip ─── */
+    .principles {
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 820px) { .principles { grid-template-columns: repeat(2, 1fr); } }
+    .principle {
+      padding: 22px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .principle .k {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .principle .v {
+      margin-top: 8px;
+      font-family: var(--sora);
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: -0.015em;
+    }
+    .principle .v em {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--brand-2);
+    }
+
+    /* ─── Quote/closing ─── */
+    .closing {
+      padding: 140px 0 120px;
+      text-align: center;
+      position: relative;
+    }
+    .closing .mark {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(44px, 7vw, 96px);
+      line-height: 1;
+      color: var(--brand-2);
+      opacity: 0.5;
+      margin: 0 0 -20px;
+    }
+    .closing blockquote {
+      font-family: var(--sora);
+      font-weight: 700;
+      font-size: clamp(28px, 4.2vw, 48px);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      max-width: 880px;
+      margin: 0 auto;
+    }
+    .closing blockquote em {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--brand-2);
+    }
+    .closing .byline {
+      margin-top: 36px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      padding: 60px 0 40px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      background: rgba(7, 9, 28, 0.4);
+    }
+    footer .row {
+      display: flex; justify-content: space-between;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    footer h4 {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 14px;
+      font-weight: 500;
+    }
+    footer ul {
+      list-style: none; padding: 0; margin: 0;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    footer a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color .2s var(--ease);
+    }
+    footer a:hover { color: var(--text); }
+    footer .brand-col { max-width: 320px; }
+    footer .brand-col p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: 14px 0 0; }
+    footer .legal-line {
+      margin-top: 48px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      display: flex; justify-content: space-between; gap: 20px;
+      flex-wrap: wrap;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ─── Page-load reveal ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      animation: reveal 1.1s var(--ease) forwards;
+    }
+    .reveal.d1 { animation-delay: 0.05s; }
+    .reveal.d2 { animation-delay: 0.18s; }
+    .reveal.d3 { animation-delay: 0.3s; }
+    .reveal.d4 { animation-delay: 0.42s; }
+    .reveal.d5 { animation-delay: 0.55s; }
+    @keyframes reveal {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+
+    /* Scroll-triggered (applied via IntersectionObserver in JS) */
+    .scroll-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .9s var(--ease), transform .9s var(--ease);
+    }
+    .scroll-in.seen {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Selection */
+    ::selection { background: var(--brand); color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- ─── Nav ─── -->
+  <nav class="top">
+    <div class="wrap row">
+      <a class="wordmark" href="./">taupi<span class="dot"></span></a>
+      <ul>
+        <li><a href="#why">what it is</a></li>
+        <li><a href="#how">how it works</a></li>
+        <li><a href="privacy-policy/">privacy</a></li>
+        <li><a href="terms-of-service/">terms</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ─── Hero ─── -->
+  <section class="hero wrap">
+    <div class="grid">
+      <div>
+        <div class="eyebrow reveal d1">Built in Latvia · EU-hosted · 1.0 in preview</div>
+
+        <h1 class="display reveal d2">
+          a <em>calm</em><br>
+          place for<br>
+          your money<span class="punct"></span>
+        </h1>
+
+        <p class="lede reveal d3">
+          Taupi is a personal budgeting app for people who want clarity — not another
+          dashboard full of graphs. Scan receipts, track a monthly rhythm, watch long-term
+          goals grow. No ads. No bank logins. No noise.
+        </p>
+
+        <div class="cta-row reveal d4">
+          <a class="btn primary" href="#soon" aria-label="App Store — coming soon">
+            <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+            App Store
+            <span class="soon-tag">soon</span>
+          </a>
+          <a class="btn ghost" href="#soon" aria-label="Google Play — coming soon">
+            <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.63 2.3c-.33.22-.53.58-.53 1v17.4c0 .42.2.78.53 1L13.5 12 3.63 2.3zm11.52 9.95L5.4 21.77l11.05-6.24-1.3-3.28zm3.87-4.18l-2.55-1.44L13.5 12l2.97 5.37 2.55-1.44c1.36-.77 1.36-2.99 0-3.76v-2.1z"/></svg>
+            Google Play
+            <span class="soon-tag">soon</span>
+          </a>
+        </div>
+
+        <div class="meta-row reveal d5">
+          <span>No ads</span>
+          <span>No tracking</span>
+          <span>Your data stays yours</span>
+        </div>
+      </div>
+
+      <div class="mockstage reveal d4" aria-hidden="true">
+        <div class="card-mock">
+          <div class="top">
+            <span>November budget</span>
+            <span class="live">Live</span>
+          </div>
+          <div class="amount">
+            <span class="cur">€</span>
+            <span class="major">427</span>
+            <span class="minor">.80</span>
+          </div>
+          <div class="label">of €620 spent · 68%</div>
+
+          <div class="progress"><div class="fill"></div></div>
+          <div class="progress-row">
+            <span>21 days in</span>
+            <span>9 to go</span>
+          </div>
+
+          <div class="feed">
+            <div class="row">
+              <div>
+                <div class="label">Groceries</div>
+                <div class="store">RIMI · 12:42</div>
+              </div>
+              <div class="val minus">−€18.40</div>
+            </div>
+            <div class="row">
+              <div>
+                <div class="label">Coffee</div>
+                <div class="store">COFFIN · 09:18</div>
+              </div>
+              <div class="val minus">−€3.60</div>
+            </div>
+            <div class="row">
+              <div>
+                <div class="label">Saved to emergency</div>
+                <div class="store">GOAL · AUTO</div>
+              </div>
+              <div class="val plus">+€50.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="receipt-strip" aria-hidden="true"></div>
+
+  <!-- ─── Features ─── -->
+  <section class="block" id="why">
+    <div class="wrap">
+      <span class="section-kicker scroll-in">What you get</span>
+      <h2 class="section-head scroll-in">
+        The small, <em>honest</em> things that<br>
+        actually move the needle.
+      </h2>
+      <p class="section-lede scroll-in">
+        Taupi is three features, done well. Not thirty, done OK. Here's what's inside.
+      </p>
+
+      <div class="features-grid">
+
+        <div class="feature scroll-in">
+          <div>
+            <span class="num">01 · scan</span>
+            <h3>Point, snap, <em>done.</em></h3>
+            <p>Photograph a receipt. Taupi reads the items, matches stores, splits VAT — no typing. Uses on-device OCR first, then a tiny AI pass for the stubborn ones.</p>
+          </div>
+          <div class="visual scan" aria-hidden="true"></div>
+        </div>
+
+        <div class="feature scroll-in">
+          <div>
+            <span class="num">02 · budget</span>
+            <h3>Monthly <em>rhythm,</em> not quarterly panic.</h3>
+            <p>Set an income and a few buckets. Taupi keeps the maths quiet and tells you how much is safe to spend today — not in a spreadsheet, in a sentence.</p>
+          </div>
+          <div class="visual budget" aria-hidden="true">
+            <div class="lbl"><span>Groceries</span><span>82%</span></div>
+            <div class="bar b1"></div>
+            <div class="lbl"><span>Going out</span><span>46%</span></div>
+            <div class="bar b2"></div>
+            <div class="lbl"><span>Savings</span><span>65%</span></div>
+            <div class="bar b3"></div>
+          </div>
+        </div>
+
+        <div class="feature scroll-in">
+          <div>
+            <span class="num">03 · goals</span>
+            <h3>Long horizons, <em>gently</em> tracked.</h3>
+            <p>Car, apartment, emergency fund — add a goal with a target and date. A small monthly number appears. That's the whole plan. Share with a partner if you like.</p>
+          </div>
+          <div class="visual goal" aria-hidden="true">
+            <div class="ring"><span>62%</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="receipt-strip" aria-hidden="true"></div>
+
+  <!-- ─── How it works ─── -->
+  <section class="block" id="how">
+    <div class="wrap">
+      <span class="section-kicker scroll-in">How it works</span>
+      <h2 class="section-head scroll-in">
+        Three steps, then it <em>gets out of your way.</em>
+      </h2>
+
+      <div class="steps">
+        <div class="step scroll-in">
+          <span class="n">Step 01</span>
+          <h3>Sign in, <em>quietly.</em></h3>
+          <p>Email, Google, Apple, or Facebook. No onboarding questionnaire. No bank credentials. Ever.</p>
+        </div>
+        <div class="step scroll-in">
+          <span class="n">Step 02</span>
+          <h3>Set a <em>monthly</em> rhythm.</h3>
+          <p>One income, a handful of categories, a savings goal if you want one. Five minutes. Editable anytime.</p>
+        </div>
+        <div class="step scroll-in">
+          <span class="n">Step 03</span>
+          <h3>Scan, log, <em>glance.</em></h3>
+          <p>Snap receipts as they happen. Glance at the dashboard. That's the whole routine.</p>
+        </div>
+      </div>
+
+      <div class="principles">
+        <div class="principle scroll-in">
+          <div class="k">Storage</div>
+          <div class="v"><em>EU</em> only</div>
+        </div>
+        <div class="principle scroll-in">
+          <div class="k">Ads</div>
+          <div class="v"><em>none.</em> ever.</div>
+        </div>
+        <div class="principle scroll-in">
+          <div class="k">AI training</div>
+          <div class="v">Your data <em>opts out.</em></div>
+        </div>
+        <div class="principle scroll-in">
+          <div class="k">Delete</div>
+          <div class="v">One <em>tap</em> away</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Closing ─── -->
+  <section class="closing wrap">
+    <p class="mark scroll-in">&ldquo;</p>
+    <blockquote class="scroll-in">
+      Finance apps didn't feel <em>human.</em><br>
+      So we built one that does.
+    </blockquote>
+    <div class="byline scroll-in">— Rainers · Riga · 2026</div>
+  </section>
+
+  <!-- ─── Footer ─── -->
+  <footer>
+    <div class="wrap">
+      <div class="row">
+        <div class="brand-col">
+          <a class="wordmark" style="font-size: 28px;" href="./">taupi<span class="dot"></span></a>
+          <p>A personal budgeting app built in Latvia. EU-hosted. No ads, no tracking, no bank logins.</p>
+        </div>
+
+        <div>
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy-policy/">Privacy Policy</a></li>
+            <li><a href="terms-of-service/">Terms of Service</a></li>
+            <li><a href="delete-account/">Delete your account</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:rainerslovkins@gmail.com">rainerslovkins@gmail.com</a></li>
+            <li><a href="https://github.com/RainersCode/taupi-legal">Source of this page</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Status</h4>
+          <ul>
+            <li style="color: var(--text-dim); font-family: var(--mono); font-size: 13px;">
+              v1.0 · in preview
+            </li>
+            <li style="color: var(--text-muted); font-family: var(--mono); font-size: 12px;">
+              App Store: soon
+            </li>
+            <li style="color: var(--text-muted); font-family: var(--mono); font-size: 12px;">
+              Google Play: soon
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="legal-line">
+        <span>© 2026 Rainers Lovkins · Valmieras novads, LV</span>
+        <span>Made with care, not with hype.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll-triggered reveals. Runs only if IO is available and motion is allowed.
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if ("IntersectionObserver" in window && !prefersReduced) {
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add("seen");
+            io.unobserve(e.target);
+          }
+        }
+      }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+      document.querySelectorAll(".scroll-in").forEach((n) => io.observe(n));
+    } else {
+      document.querySelectorAll(".scroll-in").forEach((n) => n.classList.add("seen"));
+    }
+  </script>
+</body>
+</html>

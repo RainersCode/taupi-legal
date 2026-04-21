@@ -1,1102 +1,1505 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>taupi — a calm place for your money</title>
-  <meta name="description" content="Taupi is a personal budgeting app for people who want clarity, not another dashboard full of graphs. Track expenses, scan receipts, hit long-term goals. EU-hosted, no ads, no bank logins." />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>taupi — a calm place for your money</title>
+<meta name="description" content="Taupi is a personal budgeting app. Scan receipts, track a monthly rhythm, hit long-term goals. EU-hosted, no ads, no bank logins." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Surfaces */
+  --bg: #0D1128;
+  --bg-deep: #07091C;
+  --surface: rgba(255,255,255,0.025);
+  --surface-raised: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.07);
+  --border-strong: rgba(255,255,255,0.12);
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="taupi — a calm place for your money" />
-  <meta property="og:description" content="A budgeting app that keeps your money in focus. Scan receipts, track budgets, hit long-term goals. No ads, no bank logins." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://rainerscode.github.io/taupi-legal/" />
+  /* Text */
+  --text: #F5F5F7;
+  --text-dim: #A8ACC4;
+  --text-muted: #6b6f8a;
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  /* Brand */
+  --brand: #5A6BFF;
+  --brand-2: #8093FF;
+  --brand-3: #3A4AE0;
+  --accent: #4FD1FF;
+  --success: #2DD4A7;
 
-  <style>
-    :root {
-      --bg-0: #07091c;
-      --bg-1: #0d1128;
-      --bg-2: #141a3a;
-      --bg-3: #1b2249;
-      --text: #F3F4FA;
-      --text-dim: #A8A8B3;
-      --text-muted: #6b6d82;
-      --brand: #5A6BFF;
-      --brand-2: #8093FF;
-      --brand-3: #3A4AE0;
-      --accent: #4FD1FF;
-      --success: #2DD4A7;
-      --warn: #FFB547;
-      --danger: #FF3B87;
+  --font: "Sora", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
-      --sora: "Sora", ui-sans-serif, system-ui, sans-serif;
-      --serif: "Instrument Serif", "Times New Roman", serif;
-      --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --ease: cubic-bezier(.2,.7,.2,1);
+}
 
-      --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.11 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html, body { margin: 0; padding: 0; }
 
-      --ease: cubic-bezier(.2,.7,.2,1);
-    }
+body {
+  font-family: var(--font);
+  font-weight: 400;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
 
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    html, body { margin: 0; padding: 0; }
+/* Very subtle atmospheric mesh — not gradient-heavy */
+body::before {
+  content: "";
+  position: fixed; inset: 0; z-index: -1;
+  background:
+    radial-gradient(42% 30% at 18% 4%, rgba(128,147,255,0.18), transparent 70%),
+    radial-gradient(36% 26% at 96% 18%, rgba(79,209,255,0.06), transparent 70%);
+  pointer-events: none;
+}
 
-    body {
-      font-family: var(--sora);
-      font-weight: 400;
-      background: var(--bg-1);
-      color: var(--text);
-      line-height: 1.55;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-    }
+/* ──────────────────────────────────── Utilities */
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+@media (max-width: 700px) { .wrap { padding: 0 20px; } }
 
-    /* Atmospheric mesh + grain */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      background:
-        radial-gradient(60% 50% at 12% 8%,  rgba(128, 147, 255, 0.28), transparent 60%),
-        radial-gradient(45% 40% at 92% 22%, rgba(79, 209, 255, 0.14), transparent 60%),
-        radial-gradient(80% 60% at 50% 110%, rgba(58, 74, 224, 0.18), transparent 60%),
-        linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 30%, var(--bg-1) 70%, var(--bg-0) 100%);
-    }
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background-image: var(--grain);
-      opacity: 0.35;
-      mix-blend-mode: overlay;
-      pointer-events: none;
-    }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.06em;
+  color: var(--text-dim);
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 999px;
+}
+.eyebrow .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
+}
 
-    /* ─── Layout ─── */
-    .wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
-    @media (max-width: 700px) { .wrap { padding: 0 20px; } }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 22px;
+  border-radius: 12px;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease);
+  white-space: nowrap;
+}
+.btn.primary {
+  color: white;
+  background: linear-gradient(135deg, var(--brand-2) 0%, var(--brand) 60%, var(--brand-3) 100%);
+  box-shadow: 0 10px 30px -12px rgba(90,107,255,0.65), inset 0 1px 0 rgba(255,255,255,0.18);
+}
+.btn.primary:hover { transform: translateY(-1px); box-shadow: 0 16px 40px -14px rgba(90,107,255,0.75), inset 0 1px 0 rgba(255,255,255,0.22); }
+.btn.ghost {
+  color: var(--text);
+  border-color: var(--border-strong);
+  background: var(--surface);
+}
+.btn.ghost:hover { border-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.05); }
+.btn [data-lucide] { width: 18px; height: 18px; }
 
-    /* ─── Wordmark (matches in-app TaupiLogo) ─── */
-    .wordmark {
-      display: inline-flex;
-      align-items: baseline;
-      font-family: var(--sora);
-      font-weight: 800;
-      letter-spacing: -0.045em;
-      line-height: 1;
-      color: var(--text);
-      text-decoration: none;
-    }
-    .wordmark .dot {
-      display: inline-block;
-      width: 0.22em;
-      height: 0.22em;
-      margin-left: 0.1em;
-      border-radius: 50%;
-      background: var(--brand);
-    }
-    .wordmark.glow .dot {
-      box-shadow: 0 0 24px 4px rgba(90, 107, 255, 0.55);
-    }
+/* Icon badge — the rounded-square pattern used throughout */
+.ibadge {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  color: var(--brand-2);
+}
+.ibadge [data-lucide] { width: 20px; height: 20px; }
 
-    /* ─── Nav ─── */
-    nav.top {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      padding: 22px 0;
-      backdrop-filter: saturate(140%) blur(14px);
-      -webkit-backdrop-filter: saturate(140%) blur(14px);
-      background: rgba(13, 17, 40, 0.58);
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-    }
-    nav.top .row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-    }
-    nav.top .wordmark { font-size: 26px; }
-    nav.top ul {
-      display: flex;
-      gap: 28px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-    nav.top ul a {
-      font-size: 13px;
-      font-weight: 400;
-      color: var(--text-dim);
-      text-decoration: none;
-      letter-spacing: 0.02em;
-      transition: color .2s var(--ease);
-    }
-    nav.top ul a:hover { color: var(--text); }
-    @media (max-width: 640px) { nav.top ul { display: none; } }
+/* ──────────────────────────────────── Nav */
+nav.top {
+  position: sticky; top: 0; z-index: 40;
+  padding: 18px 0;
+  background: rgba(13,17,40,0.72);
+  backdrop-filter: saturate(160%) blur(18px);
+  -webkit-backdrop-filter: saturate(160%) blur(18px);
+  border-bottom: 1px solid var(--border);
+}
+nav.top .row {
+  display: flex; align-items: center; justify-content: space-between; gap: 32px;
+}
+.wm {
+  display: inline-flex; align-items: baseline;
+  font-weight: 800; letter-spacing: -0.045em; line-height: 1;
+  color: var(--text); text-decoration: none;
+}
+.wm .d {
+  display: inline-block; width: 0.22em; height: 0.22em;
+  margin-left: 0.08em;
+  border-radius: 50%; background: var(--brand);
+}
+nav.top .wm { font-size: 22px; }
+nav.top ul {
+  display: flex; gap: 28px; margin: 0; padding: 0; list-style: none;
+}
+nav.top ul a {
+  font-size: 14px; font-weight: 500; color: var(--text-dim);
+  text-decoration: none;
+  transition: color .2s var(--ease);
+}
+nav.top ul a:hover { color: var(--text); }
+nav.top .cta { display: inline-flex; gap: 10px; align-items: center; }
+@media (max-width: 760px) { nav.top ul { display: none; } }
 
-    /* ─── Hero ─── */
-    .hero {
-      position: relative;
-      padding: 80px 0 140px;
-      overflow: hidden;
-    }
-    .hero .grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-      gap: 64px;
-      align-items: center;
-    }
-    @media (max-width: 940px) {
-      .hero { padding: 56px 0 100px; }
-      .hero .grid { grid-template-columns: 1fr; gap: 56px; }
-    }
+/* ──────────────────────────────────── Hero */
+.hero {
+  padding: 100px 0 60px;
+  position: relative;
+}
+.hero .grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
+  gap: 64px;
+  align-items: center;
+}
+@media (max-width: 980px) {
+  .hero { padding: 64px 0 40px; }
+  .hero .grid { grid-template-columns: 1fr; gap: 48px; }
+}
 
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.24em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      padding: 8px 14px;
-      border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 999px;
-      background: rgba(255,255,255,0.02);
-    }
-    .eyebrow::before {
-      content: "";
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 10px var(--accent);
-    }
+.hero h1 {
+  margin: 24px 0 0;
+  font-size: clamp(42px, 6vw, 76px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: var(--text);
+}
+.hero h1 .accent-word {
+  background: linear-gradient(120deg, var(--brand-2), var(--accent));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.hero p.lede {
+  margin-top: 22px;
+  max-width: 520px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text-dim);
+  font-weight: 400;
+}
+.hero .cta-row {
+  margin-top: 32px;
+  display: flex; flex-wrap: wrap; gap: 12px;
+}
 
-    h1.display {
-      font-family: var(--sora);
-      font-weight: 800;
-      font-size: clamp(44px, 7vw, 92px);
-      line-height: 0.95;
-      letter-spacing: -0.04em;
-      margin: 24px 0 0;
-    }
-    h1.display em {
-      font-family: var(--serif);
-      font-style: italic;
-      font-weight: 400;
-      color: var(--brand-2);
-      letter-spacing: -0.01em;
-      padding-right: 0.08em;
-    }
-    h1.display .punct {
-      display: inline-block;
-      width: 0.28em;
-      height: 0.28em;
-      border-radius: 50%;
-      background: var(--brand);
-      vertical-align: 0.12em;
-      margin-left: 0.1em;
-    }
+/* Trust mini-row under hero CTAs */
+.hero .trust-row {
+  display: flex; flex-wrap: wrap; gap: 28px;
+  margin-top: 32px;
+  font-size: 13px; color: var(--text-muted);
+}
+.hero .trust-row span {
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.hero .trust-row [data-lucide] { width: 16px; height: 16px; color: var(--success); }
 
-    p.lede {
-      margin-top: 28px;
-      max-width: 560px;
-      font-size: 17px;
-      line-height: 1.65;
-      color: var(--text-dim);
-    }
+/* ──────────────────────────────────── Phone mockup — common */
+.phone-stage {
+  position: relative;
+  display: flex; justify-content: center; align-items: center;
+  min-height: 620px;
+}
+.phone-stage::before {
+  content: "";
+  position: absolute;
+  width: 520px; height: 520px;
+  left: 50%; top: 50%;
+  transform: translate(-50%,-50%);
+  background: radial-gradient(closest-side, rgba(90,107,255,0.28), transparent 70%);
+  filter: blur(30px);
+  z-index: 0;
+  pointer-events: none;
+}
+.phone {
+  position: relative; z-index: 1;
+  width: 320px;
+  aspect-ratio: 320 / 660;
+  background: #050614;
+  border-radius: 44px;
+  padding: 9px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 60px 120px -40px rgba(0,0,0,0.9),
+    0 24px 60px -20px rgba(90,107,255,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.phone .notch {
+  position: absolute;
+  top: 16px; left: 50%; transform: translateX(-50%);
+  width: 110px; height: 28px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 3;
+}
+.phone .screen {
+  position: relative;
+  width: 100%; height: 100%;
+  background: #0A0D22;
+  border-radius: 36px;
+  overflow: hidden;
+}
 
-    .cta-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 36px;
-      flex-wrap: wrap;
-    }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 22px;
-      border-radius: 14px;
-      font-family: var(--sora);
-      font-weight: 600;
-      font-size: 14px;
-      letter-spacing: -0.01em;
-      text-decoration: none;
-      border: 1px solid transparent;
-      cursor: pointer;
-      transition: transform .18s var(--ease), box-shadow .18s var(--ease), background .2s var(--ease);
-    }
-    .btn.primary {
-      color: white;
-      background: linear-gradient(135deg, var(--brand-2) 0%, var(--brand) 50%, var(--brand-3) 100%);
-      box-shadow: 0 10px 30px -8px rgba(90,107,255,0.6), inset 0 1px 0 rgba(255,255,255,0.15);
-    }
-    .btn.primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px -10px rgba(90,107,255,0.7), inset 0 1px 0 rgba(255,255,255,0.2); }
-    .btn.ghost {
-      color: var(--text);
-      border-color: rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.02);
-    }
-    .btn.ghost:hover { border-color: rgba(255,255,255,0.24); background: rgba(255,255,255,0.05); }
-    .btn .ico { width: 18px; height: 18px; }
+/* Each phone sits at a slightly different tilt / offset so the three
+   mockups don't read as clones. Transform is set on an inner wrapper
+   because the parent .phone-stage is a flex container. */
+.phone.tilt-1 { transform: rotate(-1.2deg) translateY(-6px); }
+.phone.tilt-2 { transform: rotate(3.6deg)  translateY(14px);  }
+.phone.tilt-3 { transform: rotate(-3.8deg) translateY(-2px);  }
+.phone.tilt-4 { transform: rotate(2.4deg)  translateY(10px);  }
 
-    .soon-tag {
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      padding: 3px 7px;
-      border-radius: 4px;
-      background: rgba(79, 209, 255, 0.14);
-      color: var(--accent);
-      margin-left: 8px;
-    }
+/* Slow inner scroll — gives the impression the user is scrolling the app */
+.phone .scroll-window {
+  position: absolute;
+  top: 44px;             /* below the status bar */
+  bottom: 0; left: 0; right: 0;
+  overflow: hidden;
+  /* Fade the scroll content into the phone's edges so nothing clips harshly */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 94%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 94%, transparent 100%);
+}
+.phone .scroll-track {
+  will-change: transform;
+}
 
-    .meta-row {
-      display: flex;
-      gap: 28px;
-      margin-top: 36px;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text-muted);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      flex-wrap: wrap;
-    }
-    .meta-row span::before {
-      content: "—";
-      margin-right: 10px;
-      color: var(--brand);
-    }
+/* Different speeds + travel distances so the phones aren't in lockstep */
+.phone.scroll-a .scroll-track { animation: scr-a 26s ease-in-out infinite alternate; }
+.phone.scroll-b .scroll-track { animation: scr-b 22s ease-in-out infinite alternate; }
+.phone.scroll-c .scroll-track { animation: scr-c 30s ease-in-out infinite alternate; }
+.phone.scroll-d .scroll-track { animation: scr-d 24s ease-in-out infinite alternate; }
 
-    /* ─── Hero mock card ─── */
-    .mockstage {
-      position: relative;
-      min-height: 480px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .mockstage::before {
-      content: "";
-      position: absolute;
-      width: 420px; height: 420px;
-      left: 50%; top: 50%;
-      transform: translate(-50%,-50%);
-      background: radial-gradient(closest-side, rgba(90,107,255,0.35), transparent 70%);
-      filter: blur(20px);
-      z-index: 0;
-    }
+@keyframes scr-a { from { transform: translateY(0); }    to { transform: translateY(-38%); } }
+@keyframes scr-b { from { transform: translateY(0); }    to { transform: translateY(-32%); } }
+@keyframes scr-c { from { transform: translateY(0); }    to { transform: translateY(-44%); } }
+@keyframes scr-d { from { transform: translateY(0); }    to { transform: translateY(-36%); } }
 
-    .card-mock {
-      position: relative;
-      z-index: 1;
-      width: 340px;
-      padding: 22px;
-      border-radius: 24px;
-      background: linear-gradient(160deg, rgba(32, 38, 78, 0.72) 0%, rgba(22, 27, 54, 0.92) 100%);
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      box-shadow:
-        0 40px 80px -24px rgba(5, 8, 28, 0.9),
-        inset 0 1px 0 rgba(255,255,255,0.06);
-      animation: floaty 9s ease-in-out infinite;
-    }
-    @keyframes floaty {
-      0%, 100% { transform: translateY(0) rotate(-1deg); }
-      50%      { transform: translateY(-14px) rotate(-0.4deg); }
-    }
+/* Small faux section dividers used inside the scrolled mock content */
+.scr-divider {
+  margin: 16px 0 6px;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em;
+  color: var(--text-muted); font-weight: 600;
+}
 
-    .card-mock .top {
-      display: flex; justify-content: space-between; align-items: center;
-      color: var(--text-dim); font-size: 11px;
-      font-family: var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
-    }
-    .card-mock .top .live {
-      display: inline-flex; align-items: center; gap: 6px;
-    }
-    .card-mock .top .live::before {
-      content: ""; width: 6px; height: 6px; border-radius: 50%;
-      background: var(--success); box-shadow: 0 0 10px var(--success);
-      animation: pulse 1.8s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: .5; }
-      50%      { opacity: 1; }
-    }
+/* Mini-card style shared by some extended mock content */
+.mini-card {
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+}
+.mini-card .mc-head {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); font-weight: 600;
+}
+.mini-card .mc-big {
+  margin-top: 6px;
+  font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--text); font-variant-numeric: tabular-nums;
+}
+.mini-card .mc-sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.mini-card .mc-bar {
+  margin-top: 10px; height: 4px; border-radius: 999px;
+  background: rgba(255,255,255,0.06); overflow: hidden;
+}
+.mini-card .mc-bar .f {
+  height: 100%; background: linear-gradient(90deg, var(--brand), var(--accent));
+  border-radius: 999px;
+}
+.phone .status {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 24px 0;
+  font-size: 13px; font-weight: 600;
+  color: var(--text);
+  height: 44px;
+}
+.phone .status .icons {
+  display: inline-flex; gap: 6px; align-items: center;
+}
+.phone .status .icons [data-lucide] { width: 14px; height: 14px; }
 
-    .card-mock .amount {
-      margin-top: 16px;
-      display: flex; align-items: baseline; gap: 4px;
-    }
-    .card-mock .amount .major {
-      font-family: var(--mono);
-      font-weight: 500;
-      font-size: 54px;
-      letter-spacing: -0.03em;
-      color: var(--text);
-    }
-    .card-mock .amount .minor {
-      font-family: var(--mono);
-      font-size: 22px;
-      color: var(--text-dim);
-    }
-    .card-mock .amount .cur {
-      font-family: var(--sora);
-      font-weight: 700;
-      font-size: 20px;
-      color: var(--brand-2);
-      margin-right: 6px;
-    }
+/* ──────────────────────────────────── App screen: DASHBOARD (hero) */
+.scr-dash {
+  padding: 14px 20px 20px;
+  display: flex; flex-direction: column;
+  height: 100%;
+}
+.scr-dash .app-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 4px;
+}
+.scr-dash .app-head .wm { font-size: 18px; color: var(--text); }
+.scr-dash .app-head .wm .d { background: var(--brand); }
+.scr-dash .app-head .profile {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand-2), var(--brand));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: white;
+}
+.scr-dash .greeting {
+  margin-top: 16px;
+  font-size: 12px; color: var(--text-dim); letter-spacing: 0.02em;
+}
+.scr-dash .hero-card {
+  margin-top: 10px;
+  padding: 20px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #5A6BFF 0%, #3A4AE0 55%, #232BA2 100%);
+  box-shadow: 0 18px 40px -14px rgba(90,107,255,0.55);
+  position: relative; overflow: hidden;
+}
+.scr-dash .hero-card::before {
+  content: "";
+  position: absolute; top: -40px; right: -40px;
+  width: 140px; height: 140px; border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}
+.scr-dash .hero-card .label {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.75); font-weight: 500;
+}
+.scr-dash .hero-card .amount {
+  margin-top: 8px;
+  font-size: 36px; font-weight: 800; letter-spacing: -0.03em;
+  color: white;
+  font-variant-numeric: tabular-nums;
+}
+.scr-dash .hero-card .amount .cur { font-weight: 600; color: rgba(255,255,255,0.85); font-size: 22px; margin-right: 4px; }
+.scr-dash .hero-card .amount .cents { font-size: 20px; color: rgba(255,255,255,0.75); }
+.scr-dash .hero-card .sub { margin-top: 6px; font-size: 12px; color: rgba(255,255,255,0.8); }
+.scr-dash .hero-card .bar {
+  margin-top: 14px;
+  height: 6px; border-radius: 999px;
+  background: rgba(255,255,255,0.18);
+  overflow: hidden;
+}
+.scr-dash .hero-card .bar .fill {
+  height: 100%; width: 68%;
+  background: linear-gradient(90deg, #B6C4FF, #4FD1FF);
+  border-radius: 999px;
+}
+.scr-dash .hero-card .bar-lbl {
+  margin-top: 8px;
+  display: flex; justify-content: space-between;
+  font-size: 10px; color: rgba(255,255,255,0.8); letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
 
-    .card-mock .label {
-      font-size: 13px;
-      color: var(--text-dim);
-      margin-top: 4px;
-    }
+/* Quick actions strip */
+.scr-dash .actions {
+  margin-top: 14px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+}
+.scr-dash .actions button {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 6px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  color: var(--text); cursor: pointer;
+}
+.scr-dash .actions button [data-lucide] { width: 16px; height: 16px; color: var(--brand-2); }
+.scr-dash .actions button .n { font-size: 9px; color: var(--text-dim); letter-spacing: 0.04em; }
 
-    .progress {
-      margin-top: 20px;
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      overflow: hidden;
-      position: relative;
-    }
-    .progress .fill {
-      position: absolute; inset: 0 auto 0 0;
-      width: 68%;
-      background: linear-gradient(90deg, var(--brand), var(--accent));
-      border-radius: 999px;
-      box-shadow: 0 0 18px rgba(79,209,255,0.4);
-    }
-    .progress-row {
-      margin-top: 10px;
-      display: flex; justify-content: space-between;
-      font-family: var(--mono);
-      font-size: 11px; letter-spacing: 0.08em;
-      color: var(--text-dim);
-      text-transform: uppercase;
-    }
+/* Transactions list inside phone */
+.scr-dash .tx-label {
+  margin-top: 16px;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em;
+  color: var(--text-muted); font-weight: 600;
+}
+.scr-dash .tx {
+  margin-top: 8px;
+  display: flex; flex-direction: column;
+}
+.scr-dash .tx-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.scr-dash .tx-item:last-child { border-bottom: none; }
+.scr-dash .tx-ico {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--surface-raised); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--brand-2);
+  flex-shrink: 0;
+}
+.scr-dash .tx-ico [data-lucide] { width: 15px; height: 15px; }
+.scr-dash .tx-ico.green { color: var(--success); }
+.scr-dash .tx-body { flex: 1; min-width: 0; }
+.scr-dash .tx-title { font-size: 12px; font-weight: 500; color: var(--text); }
+.scr-dash .tx-meta { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+.scr-dash .tx-amount { font-size: 12px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+.scr-dash .tx-amount.minus { color: #FF6F91; }
+.scr-dash .tx-amount.plus { color: var(--success); }
 
-    .feed {
-      margin-top: 22px;
-      padding-top: 18px;
-      border-top: 1px dashed rgba(255,255,255,0.1);
-    }
-    .feed .row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 0;
-      font-size: 13px;
-    }
-    .feed .row .label { color: var(--text); font-weight: 400; }
-    .feed .row .store { color: var(--text-muted); font-size: 11px; font-family: var(--mono); letter-spacing: 0.06em; }
-    .feed .row .val { font-family: var(--mono); color: var(--text); }
-    .feed .row .val.minus { color: var(--danger); }
-    .feed .row .val.plus { color: var(--success); }
+/* ──────────────────────────────────── Stats bar */
+.stats {
+  padding: 40px 0 80px;
+}
+.stats .grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 40px 0;
+}
+@media (max-width: 820px) { .stats .grid { grid-template-columns: repeat(2, 1fr); } }
+.stat .n {
+  font-size: 40px; font-weight: 700; letter-spacing: -0.03em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.stat .n sup {
+  font-size: 22px; color: var(--accent); font-weight: 600;
+  margin-left: 2px;
+  vertical-align: top;
+}
+.stat .k {
+  margin-top: 6px;
+  font-size: 13px; color: var(--text-dim); font-weight: 500;
+}
 
-    /* Receipt strip divider */
-    .receipt-strip {
-      position: relative;
-      height: 22px;
-      margin: 0;
-      background: var(--bg-0);
-    }
-    .receipt-strip::before, .receipt-strip::after {
-      content: "";
-      position: absolute;
-      left: 0; right: 0;
-      height: 11px;
-      background-image: radial-gradient(circle at 11px 11px, var(--bg-1) 6px, transparent 6.5px);
-      background-size: 22px 22px;
-      background-repeat: repeat-x;
-    }
-    .receipt-strip::before { top: 0; }
-    .receipt-strip::after { bottom: 0; transform: scaleY(-1); }
+/* ──────────────────────────────────── Section heading shared */
+.section {
+  padding: 100px 0;
+}
+@media (max-width: 700px) { .section { padding: 72px 0; } }
+.section-head {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.section-head .kicker {
+  display: inline-block;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
+  color: var(--brand-2);
+  text-transform: uppercase;
+}
+.section-head h2 {
+  margin: 10px auto 0;
+  font-size: clamp(32px, 4.4vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--text);
+  max-width: 760px;
+}
+.section-head p {
+  margin: 20px auto 0;
+  max-width: 560px;
+  font-size: 17px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
 
-    /* ─── Section headings ─── */
-    section.block {
-      padding: 120px 0;
-      position: relative;
-    }
-    @media (max-width: 700px) { section.block { padding: 80px 0; } }
+/* ──────────────────────────────────── Feature grid (3 cards) */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 900px) { .features-grid { grid-template-columns: 1fr; } }
+.feature-card {
+  padding: 32px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: border-color .25s var(--ease), transform .25s var(--ease);
+}
+.feature-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+.feature-card h3 {
+  margin: 20px 0 8px;
+  font-size: 20px; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--text);
+}
+.feature-card p {
+  margin: 0;
+  font-size: 15px; color: var(--text-dim); line-height: 1.6;
+}
+.feature-card .learn {
+  margin-top: 20px;
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--brand-2); font-size: 14px; font-weight: 600;
+  text-decoration: none;
+}
+.feature-card .learn [data-lucide] { width: 14px; height: 14px; }
 
-    h2.section-head {
-      font-family: var(--sora);
-      font-weight: 800;
-      font-size: clamp(32px, 5vw, 56px);
-      letter-spacing: -0.035em;
-      line-height: 1.02;
-      margin: 0;
-      max-width: 680px;
-    }
-    h2.section-head em {
-      font-family: var(--serif);
-      font-style: italic;
-      font-weight: 400;
-      color: var(--brand-2);
-    }
-    .section-kicker {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin: 0 0 20px;
-      display: inline-block;
-      padding: 6px 10px;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 4px;
-    }
-    .section-lede {
-      margin-top: 20px;
-      max-width: 640px;
-      font-size: 16px;
-      line-height: 1.65;
-      color: var(--text-dim);
-    }
+/* ──────────────────────────────────── Showcase alternating rows */
+.showcase {
+  padding: 60px 0 40px;
+}
+.show-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  padding: 60px 0;
+}
+.show-row.reverse { direction: rtl; }
+.show-row.reverse > * { direction: ltr; }
+@media (max-width: 900px) {
+  .show-row, .show-row.reverse { grid-template-columns: 1fr; direction: ltr; gap: 48px; padding: 40px 0; }
+  .show-row.reverse > * { direction: ltr; }
+}
 
-    /* ─── Features grid ─── */
-    .features-grid {
-      margin-top: 64px;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 20px;
-    }
-    @media (max-width: 900px) {
-      .features-grid { grid-template-columns: 1fr; }
-    }
-    .feature {
-      position: relative;
-      padding: 32px 28px;
-      border-radius: 24px;
-      background: rgba(22, 27, 54, 0.55);
-      border: 1px solid rgba(255,255,255,0.07);
-      overflow: hidden;
-      min-height: 320px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform .3s var(--ease), border-color .3s var(--ease);
-    }
-    .feature:hover {
-      transform: translateY(-4px);
-      border-color: rgba(128, 147, 255, 0.24);
-    }
-    .feature .num {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text-muted);
-      letter-spacing: 0.24em;
-    }
-    .feature h3 {
-      font-family: var(--sora);
-      font-weight: 700;
-      font-size: 22px;
-      line-height: 1.15;
-      letter-spacing: -0.02em;
-      margin: 14px 0 10px;
-      color: var(--text);
-    }
-    .feature h3 em {
-      font-family: var(--serif);
-      font-style: italic;
-      font-weight: 400;
-      color: var(--brand-2);
-    }
-    .feature p {
-      margin: 0;
-      font-size: 14px;
-      color: var(--text-dim);
-      line-height: 1.6;
-    }
-    .feature .visual {
-      margin-top: 28px;
-      height: 120px;
-      position: relative;
-      border-radius: 14px;
-      background: rgba(7, 9, 28, 0.55);
-      border: 1px solid rgba(255,255,255,0.04);
-      overflow: hidden;
-    }
+.show-row .copy .kicker {
+  display: inline-block;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
+  color: var(--brand-2); text-transform: uppercase;
+}
+.show-row .copy h3 {
+  margin: 14px 0 18px;
+  font-size: clamp(28px, 3.5vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--text);
+}
+.show-row .copy p {
+  font-size: 17px; line-height: 1.65; color: var(--text-dim);
+  margin: 0 0 20px;
+}
+.show-row .copy ul {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.show-row .copy ul li {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 15px; color: var(--text);
+}
+.show-row .copy ul li [data-lucide] {
+  width: 18px; height: 18px; color: var(--success);
+  margin-top: 3px; flex-shrink: 0;
+}
+.show-row .copy ul li b { font-weight: 600; }
+.show-row .copy ul li span { color: var(--text-dim); }
 
-    /* Feature visual variations */
-    .visual.scan::before {
-      content: "";
-      position: absolute; inset: 14px;
-      border: 2px dashed rgba(79,209,255,0.45);
-      border-radius: 8px;
-    }
-    .visual.scan::after {
-      content: "";
-      position: absolute;
-      left: 14px; right: 14px;
-      top: 50%;
-      height: 2px;
-      background: var(--accent);
-      box-shadow: 0 0 12px var(--accent);
-      animation: scan 2.6s ease-in-out infinite;
-    }
-    @keyframes scan {
-      0%, 100% { top: 20%; opacity: 0.2; }
-      50%      { top: 80%; opacity: 1; }
-    }
+/* Smaller phone for showcase rows */
+.show-row .phone-stage { min-height: 560px; }
+.show-row .phone { width: 290px; }
 
-    .visual.budget {
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 10px;
-    }
-    .visual.budget .bar {
-      height: 6px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 999px;
-      overflow: hidden;
-      position: relative;
-    }
-    .visual.budget .bar::after {
-      content: "";
-      position: absolute; inset: 0 auto 0 0;
-      background: linear-gradient(90deg, var(--brand), var(--brand-2));
-      border-radius: 999px;
-    }
-    .visual.budget .bar.b1::after { width: 82%; }
-    .visual.budget .bar.b2::after { width: 46%; background: linear-gradient(90deg, var(--warn), #FF8A3D); }
-    .visual.budget .bar.b3::after { width: 65%; background: linear-gradient(90deg, var(--success), #55E8C0); }
-    .visual.budget .lbl {
-      display: flex; justify-content: space-between;
-      font-family: var(--mono); font-size: 10px;
-      color: var(--text-dim); letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
+/* ──────────────────────────────────── App screen: RECEIPT SCANNER */
+.scr-scan { padding: 14px 20px 20px; height: 100%; display: flex; flex-direction: column; }
+.scr-scan .app-head {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.scr-scan .app-head .back {
+  width: 32px; height: 32px; border-radius: 10px;
+  background: var(--surface-raised); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text);
+}
+.scr-scan .app-head .back [data-lucide] { width: 14px; height: 14px; }
+.scr-scan .app-head .title { font-size: 13px; font-weight: 600; color: var(--text); }
+.scr-scan .viewport {
+  margin-top: 16px; flex: 1;
+  border-radius: 18px;
+  background: #050614;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.scr-scan .viewport .frame-guide {
+  position: absolute;
+  inset: 24px;
+  border: 2px dashed rgba(79,209,255,0.5);
+  border-radius: 12px;
+  pointer-events: none;
+}
+.scr-scan .receipt {
+  width: 66%;
+  background: #F5F3EB;
+  color: #141414;
+  border-radius: 3px;
+  padding: 12px 10px;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 7px;
+  line-height: 1.5;
+  transform: rotate(-2deg);
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6);
+}
+.scr-scan .receipt .r-head { text-align: center; font-weight: 700; font-size: 8px; margin-bottom: 4px; letter-spacing: 0.04em; }
+.scr-scan .receipt .r-sub { text-align: center; font-size: 6px; color: #555; margin-bottom: 8px; }
+.scr-scan .receipt .r-line { display: flex; justify-content: space-between; border-bottom: 1px dashed #bbb; padding: 1px 0; }
+.scr-scan .receipt .r-total { display: flex; justify-content: space-between; font-weight: 700; padding-top: 4px; margin-top: 4px; border-top: 1px solid #333; }
+.scr-scan .scan-line {
+  position: absolute; left: 24px; right: 24px;
+  height: 2px; background: var(--accent);
+  box-shadow: 0 0 16px var(--accent), 0 0 8px var(--accent);
+  top: 40%;
+  animation: scan-y 3s ease-in-out infinite;
+}
+@keyframes scan-y {
+  0%, 100% { top: 20%; opacity: 0.4; }
+  50% { top: 78%; opacity: 1; }
+}
+.scr-scan .items {
+  margin-top: 14px;
+  padding: 14px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.scr-scan .items .h { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 10px; }
+.scr-scan .items .row {
+  display: flex; justify-content: space-between; align-items: center; padding: 5px 0;
+  font-size: 11px;
+}
+.scr-scan .items .row .nm { color: var(--text); }
+.scr-scan .items .row .price { color: var(--text-dim); font-variant-numeric: tabular-nums; font-weight: 500; }
 
-    .visual.goal {
-      padding: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .visual.goal .ring {
-      width: 92px; height: 92px;
-      border-radius: 50%;
-      background:
-        conic-gradient(var(--accent) 0% 62%, rgba(255,255,255,0.08) 62% 100%);
-      display: flex; align-items: center; justify-content: center;
-      position: relative;
-    }
-    .visual.goal .ring::before {
-      content: "";
-      position: absolute; inset: 8px;
-      border-radius: 50%;
-      background: var(--bg-1);
-    }
-    .visual.goal .ring span {
-      position: relative;
-      z-index: 1;
-      font-family: var(--mono);
-      font-weight: 500;
-      font-size: 22px;
-      color: var(--text);
-    }
+/* ──────────────────────────────────── App screen: GOALS */
+.scr-goals { padding: 14px 20px 20px; height: 100%; display: flex; flex-direction: column; }
+.scr-goals .app-head {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.scr-goals .app-head h4 { margin: 0; font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+.scr-goals .plus {
+  width: 30px; height: 30px; border-radius: 10px;
+  background: var(--brand); display: flex; align-items: center; justify-content: center; color: white;
+}
+.scr-goals .plus [data-lucide] { width: 14px; height: 14px; }
+.scr-goals .progress-card {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+}
+.scr-goals .progress-card + .progress-card { margin-top: 10px; }
+.scr-goals .progress-card .h {
+  display: flex; align-items: center; gap: 10px;
+}
+.scr-goals .progress-card .h .gic {
+  width: 32px; height: 32px; border-radius: 10px;
+  background: rgba(90,107,255,0.14);
+  color: var(--brand-2);
+  display: flex; align-items: center; justify-content: center;
+}
+.scr-goals .progress-card .h .gic [data-lucide] { width: 16px; height: 16px; }
+.scr-goals .progress-card .h .t { flex: 1; font-size: 13px; font-weight: 600; color: var(--text); }
+.scr-goals .progress-card .h .p { font-size: 12px; font-weight: 700; color: var(--brand-2); }
+.scr-goals .progress-card .bar {
+  margin-top: 12px;
+  height: 6px; border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+.scr-goals .progress-card .bar .fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand), var(--accent));
+  border-radius: 999px;
+}
+.scr-goals .progress-card .meta {
+  margin-top: 10px;
+  display: flex; justify-content: space-between;
+  font-size: 10.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.scr-goals .progress-card.v2 .h .gic { background: rgba(79,209,255,0.14); color: var(--accent); }
+.scr-goals .progress-card.v2 .bar .fill { background: linear-gradient(90deg, var(--accent), var(--success)); }
+.scr-goals .progress-card.v2 .h .p { color: var(--accent); }
+.scr-goals .progress-card.v3 .h .gic { background: rgba(45,212,167,0.14); color: var(--success); }
+.scr-goals .progress-card.v3 .bar .fill { background: linear-gradient(90deg, var(--success), #55E8C0); }
+.scr-goals .progress-card.v3 .h .p { color: var(--success); }
 
-    /* ─── How it works ─── */
-    .steps {
-      margin-top: 72px;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0;
-      border-top: 1px solid rgba(255,255,255,0.07);
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-    }
-    @media (max-width: 900px) { .steps { grid-template-columns: 1fr; } }
-    .step {
-      padding: 40px 28px;
-      border-right: 1px solid rgba(255,255,255,0.07);
-      position: relative;
-    }
-    .step:last-child { border-right: none; }
-    @media (max-width: 900px) {
-      .step { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); }
-      .step:last-child { border-bottom: none; }
-    }
-    .step .n {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.24em;
-      color: var(--brand-2);
-      text-transform: uppercase;
-    }
-    .step h3 {
-      font-family: var(--sora);
-      font-weight: 700;
-      font-size: 24px;
-      letter-spacing: -0.025em;
-      margin: 18px 0 10px;
-      max-width: 240px;
-      line-height: 1.1;
-    }
-    .step h3 em {
-      font-family: var(--serif);
-      font-style: italic;
-      font-weight: 400;
-      color: var(--text);
-    }
-    .step p {
-      margin: 0;
-      font-size: 14px;
-      color: var(--text-dim);
-      line-height: 1.6;
-    }
+/* ──────────────────────────────────── Security callout */
+.security {
+  padding: 80px 0;
+}
+.security .card {
+  border-radius: 28px;
+  background: linear-gradient(135deg, #10153A 0%, #0A0D22 100%);
+  border: 1px solid var(--border);
+  padding: 64px 56px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 40px;
+  align-items: center;
+  position: relative; overflow: hidden;
+}
+.security .card::before {
+  content: "";
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(79,209,255,0.18), transparent 70%);
+}
+@media (max-width: 760px) {
+  .security .card { grid-template-columns: 1fr; gap: 24px; padding: 44px 28px; }
+}
+.security .shield {
+  width: 84px; height: 84px; border-radius: 24px;
+  background: linear-gradient(135deg, var(--brand-2), var(--brand-3));
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  box-shadow: 0 20px 50px -14px rgba(90,107,255,0.55);
+  position: relative; z-index: 1;
+}
+.security .shield [data-lucide] { width: 40px; height: 40px; }
+.security .kicker {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--brand-2);
+}
+.security h3 {
+  margin: 8px 0 14px;
+  font-size: clamp(24px, 3vw, 34px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
+}
+.security p { margin: 0 0 20px; font-size: 16px; color: var(--text-dim); line-height: 1.6; max-width: 560px; }
+.security .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.security .chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 13px; color: var(--text);
+}
+.security .chip [data-lucide] { width: 14px; height: 14px; color: var(--success); }
 
-    /* ─── Principles strip ─── */
-    .principles {
-      margin-top: 40px;
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-    }
-    @media (max-width: 820px) { .principles { grid-template-columns: repeat(2, 1fr); } }
-    .principle {
-      padding: 22px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-    .principle .k {
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.24em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .principle .v {
-      margin-top: 8px;
-      font-family: var(--sora);
-      font-weight: 700;
-      font-size: 17px;
-      letter-spacing: -0.015em;
-    }
-    .principle .v em {
-      font-family: var(--serif);
-      font-style: italic;
-      font-weight: 400;
-      color: var(--brand-2);
-    }
+/* ──────────────────────────────────── How it works */
+.how .steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 900px) { .how .steps { grid-template-columns: 1fr; } }
+.step {
+  padding: 32px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  position: relative;
+}
+.step .n {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--brand); color: white;
+  font-weight: 700; font-size: 15px;
+}
+.step h4 {
+  margin: 20px 0 8px;
+  font-size: 19px; font-weight: 700; letter-spacing: -0.02em;
+}
+.step p {
+  margin: 0;
+  font-size: 15px; color: var(--text-dim); line-height: 1.6;
+}
 
-    /* ─── Quote/closing ─── */
-    .closing {
-      padding: 140px 0 120px;
-      text-align: center;
-      position: relative;
-    }
-    .closing .mark {
-      font-family: var(--serif);
-      font-style: italic;
-      font-size: clamp(44px, 7vw, 96px);
-      line-height: 1;
-      color: var(--brand-2);
-      opacity: 0.5;
-      margin: 0 0 -20px;
-    }
-    .closing blockquote {
-      font-family: var(--sora);
-      font-weight: 700;
-      font-size: clamp(28px, 4.2vw, 48px);
-      letter-spacing: -0.03em;
-      line-height: 1.15;
-      max-width: 880px;
-      margin: 0 auto;
-    }
-    .closing blockquote em {
-      font-family: var(--serif);
-      font-style: italic;
-      font-weight: 400;
-      color: var(--brand-2);
-    }
-    .closing .byline {
-      margin-top: 36px;
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-    }
+/* ──────────────────────────────────── CTA band */
+.cta-band {
+  padding: 80px 0 100px;
+}
+.cta-band .card {
+  border-radius: 28px;
+  padding: 72px 56px;
+  text-align: center;
+  background:
+    radial-gradient(70% 100% at 50% 0%, rgba(128,147,255,0.22), transparent 70%),
+    linear-gradient(180deg, #121640, #0B0F2A);
+  border: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.cta-band h2 {
+  margin: 0 auto;
+  font-size: clamp(32px, 4vw, 48px); font-weight: 800; letter-spacing: -0.03em;
+  line-height: 1.1; max-width: 720px;
+}
+.cta-band p {
+  margin: 18px auto 0;
+  max-width: 520px;
+  color: var(--text-dim);
+  font-size: 17px;
+  line-height: 1.6;
+}
+.cta-band .cta-row {
+  margin-top: 32px;
+  display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+}
+.cta-band .tag {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px;
+  background: rgba(79,209,255,0.14);
+  color: var(--accent);
+  margin-left: 6px;
+}
 
-    /* ─── Footer ─── */
-    footer {
-      padding: 60px 0 40px;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      background: rgba(7, 9, 28, 0.4);
-    }
-    footer .row {
-      display: flex; justify-content: space-between;
-      gap: 40px;
-      flex-wrap: wrap;
-    }
-    footer h4 {
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.24em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin: 0 0 14px;
-      font-weight: 500;
-    }
-    footer ul {
-      list-style: none; padding: 0; margin: 0;
-      display: flex; flex-direction: column; gap: 8px;
-    }
-    footer a {
-      color: var(--text-dim);
-      text-decoration: none;
-      font-size: 14px;
-      transition: color .2s var(--ease);
-    }
-    footer a:hover { color: var(--text); }
-    footer .brand-col { max-width: 320px; }
-    footer .brand-col p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: 14px 0 0; }
-    footer .legal-line {
-      margin-top: 48px;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255,255,255,0.04);
-      display: flex; justify-content: space-between; gap: 20px;
-      flex-wrap: wrap;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
-    }
+/* ──────────────────────────────────── Footer */
+footer {
+  padding: 60px 0 40px;
+  border-top: 1px solid var(--border);
+}
+footer .grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 48px;
+}
+@media (max-width: 820px) {
+  footer .grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+footer .brand-col p {
+  margin: 16px 0 0;
+  font-size: 14px; color: var(--text-muted); line-height: 1.6;
+  max-width: 280px;
+}
+footer h5 {
+  margin: 0 0 14px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+footer ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+footer ul a {
+  font-size: 14px; color: var(--text-dim); text-decoration: none;
+  transition: color .2s var(--ease);
+}
+footer ul a:hover { color: var(--text); }
+footer .legal {
+  margin-top: 48px; padding-top: 24px;
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  font-size: 12px; color: var(--text-muted);
+}
+footer .legal a { color: var(--text-muted); text-decoration: none; }
+footer .legal a:hover { color: var(--text-dim); }
 
-    /* ─── Page-load reveal ─── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(14px);
-      animation: reveal 1.1s var(--ease) forwards;
-    }
-    .reveal.d1 { animation-delay: 0.05s; }
-    .reveal.d2 { animation-delay: 0.18s; }
-    .reveal.d3 { animation-delay: 0.3s; }
-    .reveal.d4 { animation-delay: 0.42s; }
-    .reveal.d5 { animation-delay: 0.55s; }
-    @keyframes reveal {
-      to { opacity: 1; transform: translateY(0); }
-    }
+::selection { background: var(--brand); color: white; }
 
-    /* Respect reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation: none !important; transition: none !important; }
-    }
-
-    /* Scroll-triggered (applied via IntersectionObserver in JS) */
-    .scroll-in {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity .9s var(--ease), transform .9s var(--ease);
-    }
-    .scroll-in.seen {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Selection */
-    ::selection { background: var(--brand); color: white; }
-  </style>
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
 </head>
 <body>
 
-  <!-- ─── Nav ─── -->
-  <nav class="top">
-    <div class="wrap row">
-      <a class="wordmark" href="./">taupi<span class="dot"></span></a>
-      <ul>
-        <li><a href="#why">what it is</a></li>
-        <li><a href="#how">how it works</a></li>
-        <li><a href="privacy-policy/">privacy</a></li>
-        <li><a href="terms-of-service/">terms</a></li>
-      </ul>
+<!-- ────────────────────────────────────── Nav -->
+<nav class="top">
+  <div class="wrap row">
+    <a class="wm" href="#top">taupi<span class="d"></span></a>
+    <ul>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#security">Security</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="privacy-policy/">Privacy</a></li>
+    </ul>
+    <div class="cta">
+      <a class="btn primary" href="#get">Get the app <i data-lucide="arrow-right"></i></a>
     </div>
-  </nav>
+  </div>
+</nav>
 
-  <!-- ─── Hero ─── -->
-  <section class="hero wrap">
-    <div class="grid">
-      <div>
-        <div class="eyebrow reveal d1">Built in Latvia · EU-hosted · 1.0 in preview</div>
-
-        <h1 class="display reveal d2">
-          a <em>calm</em><br>
-          place for<br>
-          your money<span class="punct"></span>
-        </h1>
-
-        <p class="lede reveal d3">
-          Taupi is a personal budgeting app for people who want clarity — not another
-          dashboard full of graphs. Scan receipts, track a monthly rhythm, watch long-term
-          goals grow. No ads. No bank logins. No noise.
-        </p>
-
-        <div class="cta-row reveal d4">
-          <a class="btn primary" href="#soon" aria-label="App Store — coming soon">
-            <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
-            App Store
-            <span class="soon-tag">soon</span>
-          </a>
-          <a class="btn ghost" href="#soon" aria-label="Google Play — coming soon">
-            <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.63 2.3c-.33.22-.53.58-.53 1v17.4c0 .42.2.78.53 1L13.5 12 3.63 2.3zm11.52 9.95L5.4 21.77l11.05-6.24-1.3-3.28zm3.87-4.18l-2.55-1.44L13.5 12l2.97 5.37 2.55-1.44c1.36-.77 1.36-2.99 0-3.76v-2.1z"/></svg>
-            Google Play
-            <span class="soon-tag">soon</span>
-          </a>
-        </div>
-
-        <div class="meta-row reveal d5">
-          <span>No ads</span>
-          <span>No tracking</span>
-          <span>Your data stays yours</span>
-        </div>
-      </div>
-
-      <div class="mockstage reveal d4" aria-hidden="true">
-        <div class="card-mock">
-          <div class="top">
-            <span>November budget</span>
-            <span class="live">Live</span>
-          </div>
-          <div class="amount">
-            <span class="cur">€</span>
-            <span class="major">427</span>
-            <span class="minor">.80</span>
-          </div>
-          <div class="label">of €620 spent · 68%</div>
-
-          <div class="progress"><div class="fill"></div></div>
-          <div class="progress-row">
-            <span>21 days in</span>
-            <span>9 to go</span>
-          </div>
-
-          <div class="feed">
-            <div class="row">
-              <div>
-                <div class="label">Groceries</div>
-                <div class="store">RIMI · 12:42</div>
-              </div>
-              <div class="val minus">−€18.40</div>
-            </div>
-            <div class="row">
-              <div>
-                <div class="label">Coffee</div>
-                <div class="store">COFFIN · 09:18</div>
-              </div>
-              <div class="val minus">−€3.60</div>
-            </div>
-            <div class="row">
-              <div>
-                <div class="label">Saved to emergency</div>
-                <div class="store">GOAL · AUTO</div>
-              </div>
-              <div class="val plus">+€50.00</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="receipt-strip" aria-hidden="true"></div>
-
-  <!-- ─── Features ─── -->
-  <section class="block" id="why">
-    <div class="wrap">
-      <span class="section-kicker scroll-in">What you get</span>
-      <h2 class="section-head scroll-in">
-        The small, <em>honest</em> things that<br>
-        actually move the needle.
-      </h2>
-      <p class="section-lede scroll-in">
-        Taupi is three features, done well. Not thirty, done OK. Here's what's inside.
+<!-- ────────────────────────────────────── Hero -->
+<section class="hero" id="top">
+  <div class="wrap grid">
+    <div>
+      <span class="eyebrow"><span class="dot"></span>Built in Latvia · EU-hosted · v1.0 preview</span>
+      <h1>
+        A calmer way<br>
+        to manage <span class="accent-word">your money.</span>
+      </h1>
+      <p class="lede">
+        Taupi is a personal budgeting app for people who want clarity — not another dashboard full of graphs. Scan receipts, track a monthly rhythm, hit long-term goals.
       </p>
-
-      <div class="features-grid">
-
-        <div class="feature scroll-in">
-          <div>
-            <span class="num">01 · scan</span>
-            <h3>Point, snap, <em>done.</em></h3>
-            <p>Photograph a receipt. Taupi reads the items, matches stores, splits VAT — no typing. Uses on-device OCR first, then a tiny AI pass for the stubborn ones.</p>
-          </div>
-          <div class="visual scan" aria-hidden="true"></div>
-        </div>
-
-        <div class="feature scroll-in">
-          <div>
-            <span class="num">02 · budget</span>
-            <h3>Monthly <em>rhythm,</em> not quarterly panic.</h3>
-            <p>Set an income and a few buckets. Taupi keeps the maths quiet and tells you how much is safe to spend today — not in a spreadsheet, in a sentence.</p>
-          </div>
-          <div class="visual budget" aria-hidden="true">
-            <div class="lbl"><span>Groceries</span><span>82%</span></div>
-            <div class="bar b1"></div>
-            <div class="lbl"><span>Going out</span><span>46%</span></div>
-            <div class="bar b2"></div>
-            <div class="lbl"><span>Savings</span><span>65%</span></div>
-            <div class="bar b3"></div>
-          </div>
-        </div>
-
-        <div class="feature scroll-in">
-          <div>
-            <span class="num">03 · goals</span>
-            <h3>Long horizons, <em>gently</em> tracked.</h3>
-            <p>Car, apartment, emergency fund — add a goal with a target and date. A small monthly number appears. That's the whole plan. Share with a partner if you like.</p>
-          </div>
-          <div class="visual goal" aria-hidden="true">
-            <div class="ring"><span>62%</span></div>
-          </div>
-        </div>
-
+      <div class="cta-row">
+        <a class="btn primary" href="#get"><i data-lucide="apple"></i> App Store</a>
+        <a class="btn ghost" href="#get"><i data-lucide="play"></i> Google Play</a>
+      </div>
+      <div class="trust-row">
+        <span><i data-lucide="shield-check"></i>No ads, ever</span>
+        <span><i data-lucide="eye-off"></i>Zero tracking</span>
+        <span><i data-lucide="globe"></i>EU-hosted only</span>
       </div>
     </div>
-  </section>
 
-  <div class="receipt-strip" aria-hidden="true"></div>
+    <!-- Phone mockup — DASHBOARD -->
+    <div class="phone-stage">
+      <div class="phone tilt-1 scroll-a" aria-hidden="true">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="status">
+            <span>9:41</span>
+            <span class="icons">
+              <i data-lucide="signal"></i>
+              <i data-lucide="wifi"></i>
+              <i data-lucide="battery-full"></i>
+            </span>
+          </div>
+          <div class="scroll-window">
+          <div class="scroll-track">
+          <div class="scr-dash">
+            <div class="app-head">
+              <span class="wm">taupi<span class="d"></span></span>
+              <div class="profile">R</div>
+            </div>
+            <div class="greeting">Labdien, Rainers</div>
 
-  <!-- ─── How it works ─── -->
-  <section class="block" id="how">
-    <div class="wrap">
-      <span class="section-kicker scroll-in">How it works</span>
-      <h2 class="section-head scroll-in">
-        Three steps, then it <em>gets out of your way.</em>
-      </h2>
+            <div class="hero-card">
+              <div class="label">Safe to spend today</div>
+              <div class="amount"><span class="cur">€</span>14<span class="cents">.20</span></div>
+              <div class="sub">of €620 monthly · 9 days to go</div>
+              <div class="bar"><div class="fill"></div></div>
+              <div class="bar-lbl"><span>Spent €427.80</span><span>68%</span></div>
+            </div>
 
-      <div class="steps">
-        <div class="step scroll-in">
-          <span class="n">Step 01</span>
-          <h3>Sign in, <em>quietly.</em></h3>
-          <p>Email, Google, Apple, or Facebook. No onboarding questionnaire. No bank credentials. Ever.</p>
-        </div>
-        <div class="step scroll-in">
-          <span class="n">Step 02</span>
-          <h3>Set a <em>monthly</em> rhythm.</h3>
-          <p>One income, a handful of categories, a savings goal if you want one. Five minutes. Editable anytime.</p>
-        </div>
-        <div class="step scroll-in">
-          <span class="n">Step 03</span>
-          <h3>Scan, log, <em>glance.</em></h3>
-          <p>Snap receipts as they happen. Glance at the dashboard. That's the whole routine.</p>
-        </div>
-      </div>
+            <div class="actions">
+              <button><i data-lucide="plus"></i><span class="n">Add</span></button>
+              <button><i data-lucide="scan-line"></i><span class="n">Scan</span></button>
+              <button><i data-lucide="target"></i><span class="n">Goals</span></button>
+              <button><i data-lucide="sparkles"></i><span class="n">Insights</span></button>
+            </div>
 
-      <div class="principles">
-        <div class="principle scroll-in">
-          <div class="k">Storage</div>
-          <div class="v"><em>EU</em> only</div>
-        </div>
-        <div class="principle scroll-in">
-          <div class="k">Ads</div>
-          <div class="v"><em>none.</em> ever.</div>
-        </div>
-        <div class="principle scroll-in">
-          <div class="k">AI training</div>
-          <div class="v">Your data <em>opts out.</em></div>
-        </div>
-        <div class="principle scroll-in">
-          <div class="k">Delete</div>
-          <div class="v">One <em>tap</em> away</div>
+            <div class="tx-label">Today</div>
+            <div class="tx">
+              <div class="tx-item">
+                <div class="tx-ico"><i data-lucide="shopping-basket"></i></div>
+                <div class="tx-body">
+                  <div class="tx-title">Rimi</div>
+                  <div class="tx-meta">Groceries · 12:42</div>
+                </div>
+                <div class="tx-amount minus">−€18.40</div>
+              </div>
+              <div class="tx-item">
+                <div class="tx-ico"><i data-lucide="coffee"></i></div>
+                <div class="tx-body">
+                  <div class="tx-title">Coffin</div>
+                  <div class="tx-meta">Coffee · 09:18</div>
+                </div>
+                <div class="tx-amount minus">−€3.60</div>
+              </div>
+              <div class="tx-item">
+                <div class="tx-ico green"><i data-lucide="piggy-bank"></i></div>
+                <div class="tx-body">
+                  <div class="tx-title">Emergency fund</div>
+                  <div class="tx-meta">Auto-save · today</div>
+                </div>
+                <div class="tx-amount plus">+€50.00</div>
+              </div>
+            </div>
+
+            <div class="tx-label">Yesterday</div>
+            <div class="tx">
+              <div class="tx-item">
+                <div class="tx-ico"><i data-lucide="fuel"></i></div>
+                <div class="tx-body">
+                  <div class="tx-title">Circle K</div>
+                  <div class="tx-meta">Transport · 17:05</div>
+                </div>
+                <div class="tx-amount minus">−€42.00</div>
+              </div>
+              <div class="tx-item">
+                <div class="tx-ico"><i data-lucide="utensils"></i></div>
+                <div class="tx-body">
+                  <div class="tx-title">Lido</div>
+                  <div class="tx-meta">Going out · 13:20</div>
+                </div>
+                <div class="tx-amount minus">−€11.80</div>
+              </div>
+              <div class="tx-item">
+                <div class="tx-ico"><i data-lucide="bus"></i></div>
+                <div class="tx-body">
+                  <div class="tx-title">Rīgas Satiksme</div>
+                  <div class="tx-meta">Transport · 08:14</div>
+                </div>
+                <div class="tx-amount minus">−€2.30</div>
+              </div>
+            </div>
+
+            <div class="scr-divider">This month</div>
+            <div class="mini-card">
+              <div class="mc-head"><span>Saved so far</span><span style="color:var(--success)">+€142</span></div>
+              <div class="mc-big">€142 <span style="font-size:13px;font-weight:500;color:var(--text-dim)">/ €170 target</span></div>
+              <div class="mc-sub">On pace · ahead by €28</div>
+              <div class="mc-bar"><div class="f" style="width:83%"></div></div>
+            </div>
+
+            <div class="mini-card">
+              <div class="mc-head"><span>Current streak</span><span style="color:var(--accent)"><i data-lucide="flame" style="width:12px;height:12px;vertical-align:-2px"></i> 12 days</span></div>
+              <div class="mc-big">Under daily budget</div>
+              <div class="mc-sub">Longest this month: 12 days</div>
+            </div>
+          </div>
+          </div>
+          </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ─── Closing ─── -->
-  <section class="closing wrap">
-    <p class="mark scroll-in">&ldquo;</p>
-    <blockquote class="scroll-in">
-      Finance apps didn't feel <em>human.</em><br>
-      So we built one that does.
-    </blockquote>
-    <div class="byline scroll-in">— Rainers · Riga · 2026</div>
-  </section>
-
-  <!-- ─── Footer ─── -->
-  <footer>
-    <div class="wrap">
-      <div class="row">
-        <div class="brand-col">
-          <a class="wordmark" style="font-size: 28px;" href="./">taupi<span class="dot"></span></a>
-          <p>A personal budgeting app built in Latvia. EU-hosted. No ads, no tracking, no bank logins.</p>
-        </div>
-
-        <div>
-          <h4>Legal</h4>
-          <ul>
-            <li><a href="privacy-policy/">Privacy Policy</a></li>
-            <li><a href="terms-of-service/">Terms of Service</a></li>
-            <li><a href="delete-account/">Delete your account</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4>Contact</h4>
-          <ul>
-            <li><a href="mailto:rainerslovkins@gmail.com">rainerslovkins@gmail.com</a></li>
-            <li><a href="https://github.com/RainersCode/taupi-legal">Source of this page</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4>Status</h4>
-          <ul>
-            <li style="color: var(--text-dim); font-family: var(--mono); font-size: 13px;">
-              v1.0 · in preview
-            </li>
-            <li style="color: var(--text-muted); font-family: var(--mono); font-size: 12px;">
-              App Store: soon
-            </li>
-            <li style="color: var(--text-muted); font-family: var(--mono); font-size: 12px;">
-              Google Play: soon
-            </li>
-          </ul>
-        </div>
+<!-- ────────────────────────────────────── Stats -->
+<section class="stats">
+  <div class="wrap">
+    <div class="grid">
+      <div class="stat">
+        <div class="n">6<sup>s</sup></div>
+        <div class="k">avg. receipt scan</div>
       </div>
-
-      <div class="legal-line">
-        <span>© 2026 Rainers Lovkins · Valmieras novads, LV</span>
-        <span>Made with care, not with hype.</span>
+      <div class="stat">
+        <div class="n">0</div>
+        <div class="k">ads served, ever</div>
+      </div>
+      <div class="stat">
+        <div class="n">100<sup>%</sup></div>
+        <div class="k">EU-hosted data</div>
+      </div>
+      <div class="stat">
+        <div class="n">1-tap</div>
+        <div class="k">account deletion</div>
       </div>
     </div>
-  </footer>
+  </div>
+</section>
 
-  <script>
-    // Scroll-triggered reveals. Runs only if IO is available and motion is allowed.
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if ("IntersectionObserver" in window && !prefersReduced) {
-      const io = new IntersectionObserver((entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            e.target.classList.add("seen");
-            io.unobserve(e.target);
-          }
-        }
-      }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
-      document.querySelectorAll(".scroll-in").forEach((n) => io.observe(n));
-    } else {
-      document.querySelectorAll(".scroll-in").forEach((n) => n.classList.add("seen"));
-    }
-  </script>
+<!-- ────────────────────────────────────── Features grid -->
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">What's inside</span>
+      <h2>Three features.<br>Done well, not done often.</h2>
+      <p>Taupi is deliberately small. Every screen earns its place.</p>
+    </div>
+
+    <div class="features-grid">
+      <article class="feature-card">
+        <span class="ibadge"><i data-lucide="scan-line"></i></span>
+        <h3>Receipt scanning</h3>
+        <p>Point the camera, Taupi reads the items, stores and VAT. Six seconds from snap to saved expense.</p>
+        <a class="learn" href="#scan">Learn more <i data-lucide="arrow-right"></i></a>
+      </article>
+      <article class="feature-card">
+        <span class="ibadge"><i data-lucide="wallet"></i></span>
+        <h3>Monthly rhythm</h3>
+        <p>One income, a handful of categories. Taupi tells you what's safe to spend today — in a sentence, not a chart.</p>
+        <a class="learn" href="#budget">Learn more <i data-lucide="arrow-right"></i></a>
+      </article>
+      <article class="feature-card">
+        <span class="ibadge"><i data-lucide="target"></i></span>
+        <h3>Long-term goals</h3>
+        <p>Car, apartment, emergency fund. A target, a date, a small monthly number. Share with a partner if you like.</p>
+        <a class="learn" href="#goals">Learn more <i data-lucide="arrow-right"></i></a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────── Showcase rows -->
+<section class="showcase">
+  <div class="wrap">
+
+    <!-- Row 1: Scan -->
+    <div class="show-row" id="scan">
+      <div class="phone-stage">
+        <div class="phone tilt-2 scroll-b" aria-hidden="true">
+          <div class="notch"></div>
+          <div class="screen">
+            <div class="status">
+              <span>9:41</span>
+              <span class="icons">
+                <i data-lucide="signal"></i>
+                <i data-lucide="wifi"></i>
+                <i data-lucide="battery-full"></i>
+              </span>
+            </div>
+            <div class="scroll-window">
+            <div class="scroll-track">
+            <div class="scr-scan">
+              <div class="app-head">
+                <div class="back"><i data-lucide="arrow-left"></i></div>
+                <div class="title">Scan receipt</div>
+                <div style="width:32px"></div>
+              </div>
+              <div class="viewport">
+                <div class="frame-guide"></div>
+                <div class="scan-line"></div>
+                <div class="receipt">
+                  <div class="r-head">RIMI HIPER</div>
+                  <div class="r-sub">Valmiera · 12:42</div>
+                  <div class="r-line"><span>Milk 2%</span><span>1.29</span></div>
+                  <div class="r-line"><span>Bread</span><span>1.89</span></div>
+                  <div class="r-line"><span>Eggs 10pc</span><span>2.19</span></div>
+                  <div class="r-line"><span>Cheese</span><span>3.45</span></div>
+                  <div class="r-line"><span>Apples 1kg</span><span>1.79</span></div>
+                  <div class="r-line"><span>Coffee 250g</span><span>4.99</span></div>
+                  <div class="r-line"><span>Yoghurt</span><span>0.89</span></div>
+                  <div class="r-line"><span>Chicken</span><span>1.91</span></div>
+                  <div class="r-total"><span>TOTAL</span><span>€18.40</span></div>
+                </div>
+              </div>
+              <div class="items">
+                <div class="h">8 items detected</div>
+                <div class="row"><span class="nm">Milk 2%</span><span class="price">€1.29</span></div>
+                <div class="row"><span class="nm">Bread</span><span class="price">€1.89</span></div>
+                <div class="row"><span class="nm">Eggs · 10 pack</span><span class="price">€2.19</span></div>
+                <div class="row"><span class="nm">Cheese 200g</span><span class="price">€3.45</span></div>
+                <div class="row"><span class="nm">Apples 1 kg</span><span class="price">€1.79</span></div>
+                <div class="row"><span class="nm">Coffee 250g</span><span class="price">€4.99</span></div>
+                <div class="row"><span class="nm">Yoghurt</span><span class="price">€0.89</span></div>
+                <div class="row"><span class="nm">Chicken 400g</span><span class="price">€1.91</span></div>
+              </div>
+              <div class="mini-card">
+                <div class="mc-head"><span>Category</span><span style="color:var(--brand-2)">Groceries</span></div>
+                <div class="mc-sub" style="margin-top:8px">Auto-detected · tap to change</div>
+              </div>
+              <div class="mini-card">
+                <div class="mc-head"><span>Total</span><span style="color:var(--success)">€18.40</span></div>
+                <div class="mc-big">€18.40 <span style="font-size:11px;font-weight:500;color:var(--text-dim)">· incl. VAT €3.20</span></div>
+                <div class="mc-sub">Saves to Nov budget · €186 / €280</div>
+              </div>
+            </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="copy">
+        <span class="kicker">Scan</span>
+        <h3>A receipt takes six seconds — not sixty.</h3>
+        <p>On-device OCR handles most of the work. A tiny AI pass cleans the stubborn lines. Items, store, VAT and date are split automatically.</p>
+        <ul>
+          <li><i data-lucide="check"></i><div><b>On-device first.</b> <span>Most receipts never leave your phone.</span></div></li>
+          <li><i data-lucide="check"></i><div><b>Edit inline.</b> <span>Swipe a line item to remove or recategorise.</span></div></li>
+          <li><i data-lucide="check"></i><div><b>Privacy by design.</b> <span>Receipt images are discarded after parsing.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Row 2: Budget (reverse) -->
+    <div class="show-row reverse" id="budget">
+      <div class="phone-stage">
+        <div class="phone tilt-3 scroll-c" aria-hidden="true">
+          <div class="notch"></div>
+          <div class="screen">
+            <div class="status">
+              <span>9:41</span>
+              <span class="icons">
+                <i data-lucide="signal"></i>
+                <i data-lucide="wifi"></i>
+                <i data-lucide="battery-full"></i>
+              </span>
+            </div>
+            <div class="scroll-window">
+            <div class="scroll-track">
+            <div class="scr-dash">
+              <div class="app-head">
+                <span class="wm">taupi<span class="d"></span></span>
+                <div class="profile">R</div>
+              </div>
+              <div class="greeting">November · 21 days in</div>
+              <div class="hero-card">
+                <div class="label">Monthly budget</div>
+                <div class="amount"><span class="cur">€</span>427<span class="cents">.80</span></div>
+                <div class="sub">of €620 · 68% spent</div>
+                <div class="bar"><div class="fill"></div></div>
+                <div class="bar-lbl"><span>21 days in</span><span>9 to go</span></div>
+              </div>
+              <div class="tx-label">Categories</div>
+              <div class="tx">
+                <div class="tx-item">
+                  <div class="tx-ico"><i data-lucide="shopping-basket"></i></div>
+                  <div class="tx-body">
+                    <div class="tx-title">Groceries</div>
+                    <div class="tx-meta">€186 of €280 · 66%</div>
+                  </div>
+                  <div class="tx-amount">66%</div>
+                </div>
+                <div class="tx-item">
+                  <div class="tx-ico"><i data-lucide="utensils"></i></div>
+                  <div class="tx-body">
+                    <div class="tx-title">Going out</div>
+                    <div class="tx-meta">€64 of €140 · 46%</div>
+                  </div>
+                  <div class="tx-amount">46%</div>
+                </div>
+                <div class="tx-item">
+                  <div class="tx-ico"><i data-lucide="car"></i></div>
+                  <div class="tx-body">
+                    <div class="tx-title">Transport</div>
+                    <div class="tx-meta">€38 of €80 · 47%</div>
+                  </div>
+                  <div class="tx-amount">47%</div>
+                </div>
+                <div class="tx-item">
+                  <div class="tx-ico"><i data-lucide="smartphone"></i></div>
+                  <div class="tx-body">
+                    <div class="tx-title">Subscriptions</div>
+                    <div class="tx-meta">€28 of €40 · 70%</div>
+                  </div>
+                  <div class="tx-amount">70%</div>
+                </div>
+                <div class="tx-item">
+                  <div class="tx-ico"><i data-lucide="shirt"></i></div>
+                  <div class="tx-body">
+                    <div class="tx-title">Clothing</div>
+                    <div class="tx-meta">€19 of €60 · 32%</div>
+                  </div>
+                  <div class="tx-amount">32%</div>
+                </div>
+                <div class="tx-item">
+                  <div class="tx-ico green"><i data-lucide="piggy-bank"></i></div>
+                  <div class="tx-body">
+                    <div class="tx-title">Saved this month</div>
+                    <div class="tx-meta">€142 · ahead by €28</div>
+                  </div>
+                  <div class="tx-amount plus">+€142</div>
+                </div>
+              </div>
+
+              <div class="scr-divider">Recurring</div>
+              <div class="mini-card">
+                <div class="mc-head"><span>Netflix</span><span style="color:var(--text-dim)">14 Nov</span></div>
+                <div class="mc-sub" style="margin-top:4px">Subscription · €11.99 / month</div>
+              </div>
+              <div class="mini-card">
+                <div class="mc-head"><span>Spotify</span><span style="color:var(--text-dim)">21 Nov</span></div>
+                <div class="mc-sub" style="margin-top:4px">Subscription · €9.99 / month</div>
+              </div>
+              <div class="mini-card">
+                <div class="mc-head"><span>Gym pass</span><span style="color:var(--text-dim)">1 Dec</span></div>
+                <div class="mc-sub" style="margin-top:4px">Subscription · €39.00 / month</div>
+              </div>
+            </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="copy">
+        <span class="kicker">Budget</span>
+        <h3>Monthly rhythm, not quarterly panic.</h3>
+        <p>Set your income once. Pick a handful of buckets. Taupi computes a single number — how much is safe to spend today — and keeps the rest out of your way.</p>
+        <ul>
+          <li><i data-lucide="check"></i><div><b>One number.</b> <span>"Safe to spend today" — no mental arithmetic.</span></div></li>
+          <li><i data-lucide="check"></i><div><b>Categories without clutter.</b> <span>As few as 3, as many as you need.</span></div></li>
+          <li><i data-lucide="check"></i><div><b>Drop-in adjustments.</b> <span>Change income or buckets any time, without reset.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Row 3: Goals -->
+    <div class="show-row" id="goals">
+      <div class="phone-stage">
+        <div class="phone tilt-4 scroll-d" aria-hidden="true">
+          <div class="notch"></div>
+          <div class="screen">
+            <div class="status">
+              <span>9:41</span>
+              <span class="icons">
+                <i data-lucide="signal"></i>
+                <i data-lucide="wifi"></i>
+                <i data-lucide="battery-full"></i>
+              </span>
+            </div>
+            <div class="scroll-window">
+            <div class="scroll-track">
+            <div class="scr-goals">
+              <div class="app-head">
+                <h4>Long-term goals</h4>
+                <div class="plus"><i data-lucide="plus"></i></div>
+              </div>
+              <div class="progress-card">
+                <div class="h">
+                  <div class="gic"><i data-lucide="car"></i></div>
+                  <div class="t">Car fund</div>
+                  <div class="p">62%</div>
+                </div>
+                <div class="bar"><div class="fill" style="width:62%"></div></div>
+                <div class="meta"><span>€6,200 of €10,000</span><span>on track</span></div>
+              </div>
+              <div class="progress-card v2">
+                <div class="h">
+                  <div class="gic"><i data-lucide="home"></i></div>
+                  <div class="t">Apartment deposit</div>
+                  <div class="p">34%</div>
+                </div>
+                <div class="bar"><div class="fill" style="width:34%"></div></div>
+                <div class="meta"><span>€8,500 of €25,000</span><span>+€80 / week ahead</span></div>
+              </div>
+              <div class="progress-card v3">
+                <div class="h">
+                  <div class="gic"><i data-lucide="shield"></i></div>
+                  <div class="t">Emergency fund</div>
+                  <div class="p">91%</div>
+                </div>
+                <div class="bar"><div class="fill" style="width:91%"></div></div>
+                <div class="meta"><span>€2,730 of €3,000</span><span>1 month to go</span></div>
+              </div>
+              <div class="progress-card">
+                <div class="h">
+                  <div class="gic"><i data-lucide="plane"></i></div>
+                  <div class="t">Summer trip</div>
+                  <div class="p">48%</div>
+                </div>
+                <div class="bar"><div class="fill" style="width:48%"></div></div>
+                <div class="meta"><span>€960 of €2,000</span><span>shared with A.</span></div>
+              </div>
+              <div class="progress-card v2">
+                <div class="h">
+                  <div class="gic"><i data-lucide="laptop"></i></div>
+                  <div class="t">New laptop</div>
+                  <div class="p">23%</div>
+                </div>
+                <div class="bar"><div class="fill" style="width:23%"></div></div>
+                <div class="meta"><span>€460 of €2,000</span><span>on track</span></div>
+              </div>
+              <div class="progress-card v3">
+                <div class="h">
+                  <div class="gic"><i data-lucide="gift"></i></div>
+                  <div class="t">Holiday gifts</div>
+                  <div class="p">76%</div>
+                </div>
+                <div class="bar"><div class="fill" style="width:76%"></div></div>
+                <div class="meta"><span>€304 of €400</span><span>on track</span></div>
+              </div>
+              <div class="progress-card">
+                <div class="h">
+                  <div class="gic"><i data-lucide="graduation-cap"></i></div>
+                  <div class="t">Course fund</div>
+                  <div class="p">15%</div>
+                </div>
+                <div class="bar"><div class="fill" style="width:15%"></div></div>
+                <div class="meta"><span>€180 of €1,200</span><span>behind €40 / mo</span></div>
+              </div>
+            </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="copy">
+        <span class="kicker">Goals</span>
+        <h3>Long horizons, gently tracked.</h3>
+        <p>Set a target and a date. Taupi computes the small monthly number that gets you there. Share any goal with a partner, or keep it private.</p>
+        <ul>
+          <li><i data-lucide="check"></i><div><b>Pace-aware.</b> <span>Ahead, on-track, or behind — updated daily.</span></div></li>
+          <li><i data-lucide="check"></i><div><b>Shared if you want.</b> <span>Two people, one goal, split contributions.</span></div></li>
+          <li><i data-lucide="check"></i><div><b>Soft-delete.</b> <span>Paused goals can be brought back later.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ────────────────────────────────────── Security callout -->
+<section class="security" id="security">
+  <div class="wrap">
+    <div class="card">
+      <div class="shield"><i data-lucide="shield-check"></i></div>
+      <div>
+        <span class="kicker">Security & privacy</span>
+        <h3>Your data stays yours. By default, and by design.</h3>
+        <p>Taupi never connects to your bank. We collect the minimum needed to run the app, store it in the EU under Row-Level Security, and give you one-tap deletion whenever you want out.</p>
+        <div class="chips">
+          <span class="chip"><i data-lucide="check"></i>EU-hosted (Supabase · Frankfurt)</span>
+          <span class="chip"><i data-lucide="check"></i>Row-Level Security</span>
+          <span class="chip"><i data-lucide="check"></i>TLS 1.3 end-to-end</span>
+          <span class="chip"><i data-lucide="check"></i>No tracking pixels</span>
+          <span class="chip"><i data-lucide="check"></i>GDPR-compliant</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────── How it works -->
+<section class="section how" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">How it works</span>
+      <h2>Three steps, then it gets out of your way.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="n">1</div>
+        <h4>Sign in, quietly.</h4>
+        <p>Email, Apple, Google or Facebook. No onboarding questionnaire. No bank credentials.</p>
+      </div>
+      <div class="step">
+        <div class="n">2</div>
+        <h4>Set your monthly rhythm.</h4>
+        <p>Income, a few categories, one savings goal if you want one. Five minutes, editable anytime.</p>
+      </div>
+      <div class="step">
+        <div class="n">3</div>
+        <h4>Scan, log, glance.</h4>
+        <p>Snap receipts as they happen. Glance at the daily number. That's the whole routine.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────── CTA band -->
+<section class="cta-band" id="get">
+  <div class="wrap">
+    <div class="card">
+      <h2>A calmer place for your money — starting this week.</h2>
+      <p>Download the preview build and help shape v1.0. Free, no account required to try.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="#"><i data-lucide="apple"></i>App Store<span class="tag">soon</span></a>
+        <a class="btn ghost" href="#"><i data-lucide="play"></i>Google Play<span class="tag">soon</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────── Footer -->
+<footer>
+  <div class="wrap">
+    <div class="grid">
+      <div class="brand-col">
+        <a class="wm" style="font-size:26px" href="#top">taupi<span class="d"></span></a>
+        <p>A personal budgeting app built in Latvia. EU-hosted. No ads, no tracking, no bank logins.</p>
+      </div>
+      <div>
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#scan">Receipt scan</a></li>
+          <li><a href="#goals">Goals</a></li>
+          <li><a href="#how">How it works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="privacy-policy/">Privacy Policy</a></li>
+          <li><a href="terms-of-service/">Terms of Service</a></li>
+          <li><a href="delete-account/">Delete your account</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="mailto:rainerslovkins@gmail.com">rainerslovkins@gmail.com</a></li>
+          <li><a href="https://github.com/RainersCode/taupi-legal">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 Rainers Lovkins · Valmieras nov. · Latvia</span>
+      <span>v 1.0 · preview</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Lucide icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html>
